@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Top Stories</title>
+</head>
+
+<body>
+    <h2>Top Stories</h2>
+
+    {% for story in stories %}
+    <div>
+        <h3>{{ story.title }}</h3>
+        <p>{{ story.description }}</p>
+        <p>By {{ story.author.username }}</p>
+    </div>
+    {% empty %}
+    <p>No stories yet.</p>
+    {% endfor %}
+</body>
+
+</html>
