@@ -5,7 +5,8 @@
 <div class="p-2 rounded d-flex justify-content-between align-items-center bg-secondary">
     <h2 class="mt-2 text-muted fw-bold">{{ story.title }}</h2>
     {% with story.total_rank as rating %}
-    <span class="ms-4 text-muted fw-bold"> 🏆
+    <span class="ms-4 text-muted fw-bold">
+        🏆
         {% for i in "12345"|make_list %}
         {% if forloop.counter <= rating %} ★ {% else %} ☆ {% endif %} {% endfor %} ({{ rating|floatformat:"1" }}/5)
             </span>
@@ -61,24 +62,30 @@
         {% endfor %}
     </div>
 
-    {% if story.allow_contributions or story.author == user %}
-    <div class="text-end mt-3 d-flex flex-column align-items-end gap-2">
-
-        {% with branch.sorted_chapters|first as root_chapter %}
-        <a href="{% url 'chapter_create' story.id %}?parent={{ root_chapter.id }}" class="btn btn-outline-secondary">
-            + Create your Chapter 2
+    {% if user.is_authenticated %}
+    {% with branch.sorted_chapters|first as season_root %}
+    <div class="text-end mt-2">
+        <a href="{% url 'chapter_create' story.id %}?parent={{ season_root.id }}" class="btn btn-outline-secondary">
+            ➕ Create Your Chapter
         </a>
-        {% endwith %}
-
     </div>
+    {% endwith %}
     {% endif %}
 
 </div>
 {% endfor %}
-{% with branch.sorted_chapters|last as last_chapter %}
-<a href="{% url 'chapter_create' story.id %}?parent={{ last_chapter.id }}" class="btn btn-outline-primary">
-    ➕ Create New Chapter
-</a>
+
+{% if story.allow_contributions or story.author.id == user.id %}
+{% with branches|last as last_branch %}
+{% with last_branch.sorted_chapters|last as last_chapter %}
+<div class="text-end mt-4">
+    <a href="{% url 'season_create' story.id %}" class="btn btn-outline-primary">
+        ➕ Add New Season
+    </a>
+</div>
 {% endwith %}
+{% endwith %}
+{% endif %}
+
 <script src="{% static 'js/rating.js' %}"></script>
 {% endblock %}
