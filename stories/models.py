@@ -28,6 +28,37 @@ class Story(models.Model):
 
     def __str__(self):
         return self.title
+    
+    @property
+    def first_slide_chapters(self):
+        """
+        For each root chapter (parent=None), get the highest-rated child.
+        If no children, fallback to root.
+        """
+        roots = self.chapters.filter(parent=None).order_by('created_on')
+        best_chapters = []
+
+        for root in roots:
+            children = list(root.children.all().annotate(avg_rating=Avg('ratings__value')))
+
+            # include root in comparison too
+            root.avg_rating = root.average_rating
+            all_versions = [root] + children
+
+            best = max(all_versions, key=lambda ch: ch.avg_rating or 0)
+            best_chapters.append(best)
+
+        return best_chapters
+
+    @property
+    def total_rank(self):
+        """
+        Calculates the average of the ratings of the best chapters across all branches.
+        """
+        chapters = self.first_slide_chapters
+        if not chapters:
+            return 0
+        return sum(ch.average_rating for ch in chapters) / len(chapters)
 
 #--------------------------------------------------
 
