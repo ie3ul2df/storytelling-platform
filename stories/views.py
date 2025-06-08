@@ -7,9 +7,15 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg, Count  
 from .forms import RegisterForm, RatingForm
-from .models import Story, Chapter, Rating
-from .forms import StoryForm, ChapterForm
+from .models import Story, Chapter, Rating, UserProfile
+from .forms import StoryForm, ChapterForm, UserProfileForm
+from . import models
 
+
+# -----------------------------------------------
+
+def test_template(request):
+    return render(request, 'test.html')
 
 # -----------------------------------------------
 
@@ -20,6 +26,7 @@ def story_list(request):
     stories.sort(key=lambda s: s.total_rank or 0, reverse=True)
 
     return render(request, "stories/story_list.html", {"stories": stories})
+
 
 # -----------------------------------------------
 
@@ -64,58 +71,20 @@ def story_detail(request, story_id):
 
 @login_required
 def story_create(request):
-    if request.method == 'POST':
-        form = StoryForm(request.POST)
-        chapter_title = request.POST.get('chapter_title')
-        chapter_content = request.POST.get('chapter_content')
-
-        if form.is_valid() and chapter_title and chapter_content:
+    if request.method == "POST":
+        form = StoryForm(request.POST, request.FILES)
+        if form.is_valid():
             story = form.save(commit=False)
             story.author = request.user
             story.save()
-
-            # Create first chapter
-            Chapter.objects.create(
-                story=story,
-                title=chapter_title,
-                content=chapter_content,
-                author=request.user
-            )
-            return redirect('story_detail', story_id=story.id)
+            return redirect("profile")  # or wherever you want
     else:
         form = StoryForm()
-    return render(request, 'stories/story_form.html', {'form': form})
+
+    return render(request, "stories/story_form.html", {"form": form})
+
 
 # -----------------------------------------------
-
-# @login_required
-# def chapter_create(request, story_id):
-#     story = get_object_or_404(Story, id=story_id, is_public=True)
-#     parent_id = request.GET.get('parent')
-#     parent_chapter = None
-#     if parent_id:
-#         parent_chapter = get_object_or_404(Chapter, id=parent_id, story=story)
-
-#     if not story.allow_contributions and request.user != story.author:
-#         return redirect('story_detail', story_id=story.id)
-
-#     if request.method == 'POST':
-#         form = ChapterForm(request.POST)
-#         if form.is_valid():
-#             chapter = form.save(commit=False)
-#             chapter.story = story
-#             chapter.author = request.user
-#             chapter.parent = parent_chapter
-#             chapter.save()
-#             return redirect('story_detail', story_id=story.id)
-#     else:
-#         form = ChapterForm()
-
-#     return render(request, 'stories/chapter_form.html', {
-#         'form': form,
-#         'story': story,
-#         'parent': parent_chapter,
-#     })
 
 
 @login_required
@@ -176,11 +145,29 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    user = request.user
-    user_stories = user.story_set.all().order_by('-created_on')  # assuming related_name is default
-    return render(request, 'stories/profile.html', {
-        'user_profile': user,
-        'user_stories': user_stories
+    search_query = request.GET.get("search", "")
+    sort_by = request.GET.get("sort", "created_on")
+
+    stories = Story.objects.filter(author=request.user)
+
+    if search_query:
+        stories = stories.filter(title__icontains=search_query)
+
+    if sort_by == "-average_rating":
+        stories = stories.annotate(avg=models.Avg("chapters__ratings__value")).order_by("-avg")
+    else:
+        stories = stories.order_by("-created_on")
+
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if form.is_valid():
+            form.save()
+    else:
+        form = UserProfileForm(instance=request.user.userprofile)
+
+    return render(request, "stories/profile.html", {
+        "user_stories": stories,
+        "profile_form": form
     })
 
 # -----------------------------------------------
@@ -269,3 +256,30 @@ def ajax_rate_chapter(request):
     except Exception as e:
         print("🔥 ERROR:", e)
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+# -----------------------------------------------
+
+@login_required
+def story_edit(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+
+    if request.method == "POST":
+        form = StoryForm(request.POST, request.FILES, instance=story)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")
+    else:
+        form = StoryForm(instance=story)
+
+    return render(request, "stories/story_edit.html", {"form": form, "story": story})
+
+# -----------------------------------------------
+
+@login_required
+def story_delete(request, story_id):
+    story = get_object_or_404(Story, id=story_id, author=request.user)
+    if request.method == "POST":
+        story.delete()
+        return redirect("profile")
+    return render(request, "stories/story_confirm_delete.html", {"story": story})
+
