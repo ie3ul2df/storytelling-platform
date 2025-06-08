@@ -2,14 +2,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Story, Chapter, Rating
+from .models import Story, Chapter, Rating, UserProfile
 
 # -----------------------------------------------------------
 
 class StoryForm(forms.ModelForm):
     class Meta:
         model = Story
-        fields = ['title', 'description', 'is_public', 'allow_contributions']
+        fields = ['title', 'description', 'image', 'is_public', 'allow_contributions']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 5}),
         }
@@ -44,3 +44,9 @@ class RatingForm(forms.ModelForm):
         model = Rating
         fields = ['value']
 
+# -----------------------------------------------------------
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['profile_image']
