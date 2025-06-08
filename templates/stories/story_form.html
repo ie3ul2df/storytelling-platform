@@ -8,6 +8,17 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+
+    <h4>First Chapter</h4>
+    <p>
+        <label for="chapter_title">Chapter Title:</label><br>
+        <input type="text" name="chapter_title" id="chapter_title" class="form-control" required>
+    </p>
+    <p>
+        <label for="chapter_content">Chapter Content:</label><br>
+        <textarea name="chapter_content" id="chapter_content" rows="6" class="form-control" required></textarea>
+    </p>
+
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 

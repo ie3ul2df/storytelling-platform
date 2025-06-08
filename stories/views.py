@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Story
-from .forms import StoryForm
+from .models import Story, Chapter, Rating
+from .forms import StoryForm, ChapterForm
 
 def story_list(request):
     stories = Story.objects.filter(is_public=True).order_by('-created_on')
@@ -38,3 +38,23 @@ def story_create(request):
     else:
         form = StoryForm()
     return render(request, 'stories/story_form.html', {'form': form})
+
+@login_required
+def chapter_create(request, story_id):
+    story = get_object_or_404(Story, id=story_id, is_public=True)
+
+    if not story.allow_contributions and request.user != story.author:
+        return redirect('story_detail', story_id=story.id)
+
+    if request.method == 'POST':
+        form = ChapterForm(request.POST)
+        if form.is_valid():
+            chapter = form.save(commit=False)
+            chapter.story = story
+            chapter.author = request.user
+            chapter.save()
+            return redirect('story_detail', story_id=story.id)
+    else:
+        form = ChapterForm()
+
+    return render(request, 'stories/chapter_form.html', {'form': form, 'story': story})
