@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Avg
 from .forms import RegisterForm
 from .models import Story, Chapter, Rating
 from .forms import StoryForm, ChapterForm
@@ -17,10 +18,24 @@ def story_list(request):
 
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
-    chapters = story.chapters.all().order_by('created_on')
+
+    # Get all root chapters (parent=None)
+    root_chapters = story.chapters.filter(parent=None).order_by('created_on')
+    branches = []
+    for root in root_chapters:
+        children = root.children.all()
+        # Annotate children with average rating
+        rated_children = children.annotate(avg_rating=Avg('ratings__value'))
+        main_child = rated_children.order_by('-avg_rating').first() if children else None
+        branches.append({
+            'parent': root,
+            'main': main_child,
+            'alternatives': children,
+        })
+
     return render(request, 'stories/story_detail.html', {
         'story': story,
-        'chapters': chapters
+        'branches': branches,
     })
 
 # -----------------------------------------------
@@ -103,3 +118,36 @@ def profile_view(request):
         'user_profile': user,
         'user_stories': user_stories
     })
+
+# -----------------------------------------------
+
+@login_required
+def chapter_edit(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    if request.user != chapter.author:
+        return redirect('story_detail', story_id=chapter.story.id)
+
+    if request.method == 'POST':
+        form = ChapterForm(request.POST, instance=chapter)
+        if form.is_valid():
+            form.save()
+            return redirect('story_detail', story_id=chapter.story.id)
+    else:
+        form = ChapterForm(instance=chapter)
+
+    return render(request, 'stories/chapter_form.html', {
+        'form': form,
+        'story': chapter.story,
+        'parent': chapter.parent,
+    })
+
+# -----------------------------------------------
+
+@login_required
+def chapter_delete(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    if request.user == chapter.author:
+        story_id = chapter.story.id
+        chapter.delete()
+        return redirect('story_detail', story_id=story_id)
+    return redirect('story_detail', story_id=chapter.story.id)
