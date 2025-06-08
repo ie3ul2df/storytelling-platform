@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 #--------------------------------------------------
 
@@ -11,6 +13,7 @@ class Story(models.Model):
     is_public            = models.BooleanField(default=True)
     allow_contributions  = models.BooleanField(default=True)
     created_on           = models.DateTimeField(auto_now_add=True)
+    image                = models.ImageField(upload_to='stories/', blank=True, null=True)
 
     # highest-rated chapter helper (for homepage / detail view)
     @property
@@ -58,8 +61,8 @@ class Story(models.Model):
         chapters = self.first_slide_chapters
         if not chapters:
             return 0
-        return sum(ch.average_rating for ch in chapters) / len(chapters)
-
+        # return sum(ch.average_rating for ch in chapters) / len(chapters)
+        return round(sum(ch.average_rating for ch in chapters) / len(chapters), 2)
 #--------------------------------------------------
 
 class Chapter(models.Model):
@@ -104,3 +107,15 @@ class Rating(models.Model):
 @property
 def average_rating(self):
     return self.ratings.aggregate(Avg('value'))['value__avg'] or 0
+
+#--------------------------------------------------
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='profiles/', default='default-profile.png')
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.userprofile.save()
