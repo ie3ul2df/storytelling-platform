@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-<div class="p-2 rounded d-flex justify-content-between align-items-center bg-secondary">
+<div class="story-single-page-header p-2 rounded d-flex justify-content-between align-items-center bg-secondary">
     <h2 class="mt-2 text-muted fw-bold">{{ story.title }}</h2>
     {% with story.total_rank as rating %}
     <span class="ms-4 text-muted fw-bold">
@@ -13,9 +13,14 @@
             {% endwith %}
 </div>
 
+{% if story.image %}
+<div class="my-3">
+    <img src="{{ story.image.url }}" alt="{{ story.title }}" class="img-fluid rounded shadow-sm">
+</div>
+{% endif %}
+
 <p><strong>By:</strong> {{ story.author.username }}</p>
 <p>{{ story.description }}</p>
-
 <hr>
 <h3>Story Flow</h3>
 
