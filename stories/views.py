@@ -1,9 +1,12 @@
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+import json
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Avg
-from .forms import RegisterForm
+from django.db.models import Avg, Count  
+from .forms import RegisterForm, RatingForm
 from .models import Story, Chapter, Rating
 from .forms import StoryForm, ChapterForm
 
@@ -19,18 +22,30 @@ def story_list(request):
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
 
-    # Get all root chapters (parent=None)
     root_chapters = story.chapters.filter(parent=None).order_by('created_on')
     branches = []
+
     for root in root_chapters:
-        children = root.children.all()
-        # Annotate children with average rating
-        rated_children = children.annotate(avg_rating=Avg('ratings__value'))
-        main_child = rated_children.order_by('-avg_rating').first() if children else None
+        children = list(
+            root.children.all().annotate(avg_rating=Avg("ratings__value"))
+        )
+
+        # Add the parent with avg_rating
+        root.avg_rating = root.average_rating
+        all_chapters = [root] + children
+
+        # Add user rating and rating count
+        for ch in all_chapters:
+            ch.rating_count = ch.ratings.count()
+            if request.user.is_authenticated:
+                ch.user_rating = Rating.objects.filter(chapter=ch, user=request.user).first()
+
+        # Sort combined list by avg_rating desc
+        sorted_chapters = sorted(all_chapters, key=lambda c: c.avg_rating or 0, reverse=True)
+
         branches.append({
-            'parent': root,
-            'main': main_child,
-            'alternatives': children,
+            'parent': root,  # keep for context if needed
+            'sorted_chapters': sorted_chapters,
         })
 
     return render(request, 'stories/story_detail.html', {
@@ -38,7 +53,10 @@ def story_detail(request, story_id):
         'branches': branches,
     })
 
+
+
 # -----------------------------------------------
+
 
 @login_required
 def story_create(request):
@@ -151,3 +169,57 @@ def chapter_delete(request, chapter_id):
         chapter.delete()
         return redirect('story_detail', story_id=story_id)
     return redirect('story_detail', story_id=chapter.story.id)
+
+
+# -----------------------------------------------
+
+@require_POST
+@login_required
+def rate_chapter(request):
+    try:
+        data = json.loads(request.body)
+        chapter_id = data.get('chapter_id')
+        rating_value = int(data.get('rating'))
+
+        chapter = Chapter.objects.get(id=chapter_id)
+        rating, created = Rating.objects.update_or_create(
+            chapter=chapter,
+            user=request.user,
+            defaults={'value': rating_value}
+        )
+
+        return JsonResponse({'success': True, 'rating': rating_value})
+
+    except Exception as e:
+        print("Error in rate_chapter:", e)
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+# -----------------------------------------------
+
+@require_POST
+@login_required
+def ajax_rate_chapter(request):
+    try:
+        print("📥 RAW POST DATA:", request.body)
+        print("📥 POST:", request.POST)
+
+        chapter_id = int(request.POST.get("chapter_id"))
+        value = int(request.POST.get("value"))
+
+        if not (1 <= value <= 5):
+            return HttpResponseBadRequest("Invalid rating value")
+
+        chapter = Chapter.objects.get(pk=chapter_id)
+        Rating.objects.update_or_create(
+            chapter=chapter,
+            user=request.user,
+            defaults={'value': value}
+        )
+
+
+        avg = chapter.average_rating  # optional: use .aggregate(Avg) if needed
+        return JsonResponse({"success": True, "average": round(avg, 1)})
+
+    except Exception as e:
+        print("🔥 ERROR:", e)
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
