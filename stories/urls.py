@@ -11,4 +11,5 @@ urlpatterns = [
     path('chapter/<int:chapter_id>/edit/', views.chapter_edit, name='chapter_edit'),
     path('chapter/<int:chapter_id>/delete/', views.chapter_delete, name='chapter_delete'),
     path('accounts/profile/', views.profile_view, name='profile'),
+    path('ajax/rate/', views.ajax_rate_chapter, name='ajax_rate_chapter'),
 ]
