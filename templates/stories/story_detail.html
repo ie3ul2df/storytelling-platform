@@ -11,18 +11,21 @@
 <h3>Chapters</h3>
 
 {% for chapter in chapters %}
-<div>
-    <h4>{{ chapter.title }}</h4>
-    <p>{{ chapter.content|linebreaks }}</p>
-    <p><em>By {{ chapter.author.username }}</em></p>
-    <hr>
+<div class="card mb-4 {% if chapter == main_chapter %}border-primary{% endif %}">
+    <div class="card-body">
+        <h4 class="card-title">{{ chapter.title }}</h4>
+        <p class="card-text">{{ chapter.content|linebreaks }}</p>
+        <p class="text-muted"><em>By {{ chapter.author.username }}</em></p>
+
+        {% if story.allow_contributions or story.author == user %}
+        <a href="{% url 'chapter_create' story.id %}?parent={{ chapter.id }}" class="btn btn-outline-primary mt-2">
+            ➕ Add your chapter to this story
+        </a>
+        {% endif %}
+    </div>
 </div>
 {% empty %}
 <p>This story has no chapters yet.</p>
 {% endfor %}
-
-{% if story.allow_contributions or story.author == user %}
-<a href="{% url 'chapter_create' story.id %}" class="btn btn-primary mb-3">➕ Add Chapter</a>
-{% endif %}
 
 {% endblock %}
