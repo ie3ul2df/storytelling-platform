@@ -1,0 +1,19 @@
+{# templates/stories/_carousel_controls.html #}
+{% if sorted_chapters|length > 1 %}
+<div class="d-flex justify-content-end align-items-center gap-2">
+    <div class="carousel-indicators m-0">
+        {% for chapter in sorted_chapters %}
+        <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}"
+            aria-label="Slide {{ forloop.counter }}">
+        </button>
+        {% endfor %}
+    </div>
+
+    <span class="fw-bold text-muted">Read other stories</span>
+    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-target="#carousel-{{ parent.id }}"
+        data-bs-slide="prev">◀</button>
+    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-target="#carousel-{{ parent.id }}"
+        data-bs-slide="next">▶</button>
+</div>
+{% endif %}
