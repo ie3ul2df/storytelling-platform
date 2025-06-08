@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
+from .forms import RegisterForm
 from .models import Story, Chapter, Rating
 from .forms import StoryForm, ChapterForm
 
@@ -58,3 +61,23 @@ def chapter_create(request, story_id):
         form = ChapterForm()
 
     return render(request, 'stories/chapter_form.html', {'form': form, 'story': story})
+
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('story_list')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    user = request.user
+    user_stories = user.story_set.all().order_by('-created_on')  # assuming related_name is default
+    return render(request, 'stories/profile.html', {
+        'user_profile': user,
+        'user_stories': user_stories
+    })

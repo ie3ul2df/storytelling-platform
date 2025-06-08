@@ -1,6 +1,7 @@
 # FILE: stories/forms.py
-
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from .models import Story, Chapter
 
 class StoryForm(forms.ModelForm):
@@ -19,3 +20,9 @@ class ChapterForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 6}),
         }
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
