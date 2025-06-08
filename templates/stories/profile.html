@@ -1,0 +1,20 @@
+<!-- FILE: templates/stories/profile.html -->
+
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome, {{ user_profile.username }} 👋</h2>
+
+<h4>Your Stories:</h4>
+{% if user_stories %}
+<ul>
+    {% for story in user_stories %}
+    <li>
+        <a href="{% url 'story_detail' story.id %}">{{ story.title }}</a>
+        {% if not story.is_public %} <em>(Private)</em>{% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>You haven't written any stories yet.</p>
+{% endif %}
+{% endblock %}
