@@ -88,35 +88,77 @@ def story_create(request):
 
 # -----------------------------------------------
 
+# @login_required
+# def chapter_create(request, story_id):
+#     story = get_object_or_404(Story, id=story_id, is_public=True)
+#     parent_id = request.GET.get('parent')
+#     parent_chapter = None
+#     if parent_id:
+#         parent_chapter = get_object_or_404(Chapter, id=parent_id, story=story)
+
+#     if not story.allow_contributions and request.user != story.author:
+#         return redirect('story_detail', story_id=story.id)
+
+#     if request.method == 'POST':
+#         form = ChapterForm(request.POST)
+#         if form.is_valid():
+#             chapter = form.save(commit=False)
+#             chapter.story = story
+#             chapter.author = request.user
+#             chapter.parent = parent_chapter
+#             chapter.save()
+#             return redirect('story_detail', story_id=story.id)
+#     else:
+#         form = ChapterForm()
+
+#     return render(request, 'stories/chapter_form.html', {
+#         'form': form,
+#         'story': story,
+#         'parent': parent_chapter,
+#     })
+
+
 @login_required
 def chapter_create(request, story_id):
-    story = get_object_or_404(Story, id=story_id, is_public=True)
-    parent_id = request.GET.get('parent')
-    parent_chapter = None
-    if parent_id:
-        parent_chapter = get_object_or_404(Chapter, id=parent_id, story=story)
+    story = get_object_or_404(Story, pk=story_id)
+    parent_id = request.GET.get("parent")
+    parent = get_object_or_404(Chapter, pk=parent_id) if parent_id else None
 
-    if not story.allow_contributions and request.user != story.author:
-        return redirect('story_detail', story_id=story.id)
-
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ChapterForm(request.POST)
         if form.is_valid():
             chapter = form.save(commit=False)
             chapter.story = story
+            chapter.parent = parent
             chapter.author = request.user
-            chapter.parent = parent_chapter
             chapter.save()
-            return redirect('story_detail', story_id=story.id)
+            return redirect("story_detail", story_id=story.id)
     else:
         form = ChapterForm()
 
-    return render(request, 'stories/chapter_form.html', {
-        'form': form,
-        'story': story,
-        'parent': parent_chapter,
-    })
+    return render(request, "stories/chapter_form.html", {"form": form, "story": story})
 
+
+@login_required
+def season_create(request, story_id):
+    story = get_object_or_404(Story, pk=story_id)
+
+    if not (story.allow_contributions or story.author == request.user):
+        return redirect("story_detail", story_id=story.id)
+
+    if request.method == "POST":
+        form = ChapterForm(request.POST)
+        if form.is_valid():
+            chapter = form.save(commit=False)
+            chapter.story = story
+            chapter.parent = None  # Root chapter (new season)
+            chapter.author = request.user
+            chapter.save()
+            return redirect("story_detail", story_id=story.id)
+    else:
+        form = ChapterForm()
+
+    return render(request, "stories/chapter_form.html", {"form": form, "story": story, "new_season": True})
 # -----------------------------------------------
 
 def register_view(request):
