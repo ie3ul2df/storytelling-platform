@@ -1,0 +1,12 @@
+{# context vars: chapter, highlight (True/False) #}
+<div class="card mb-4 {% if highlight %}border-primary shadow-sm{% endif %}">
+    <div class="card-body">
+        <p>{{ chapter.content|linebreaks }}</p>
+        <p class="text-muted"><em>By {{ chapter.author.username }}</em></p>
+
+        {% if user == chapter.author %}
+        <a href="{% url 'chapter_edit' chapter.id %}" class="btn btn-sm btn-outline-warning me-2">Edit</a>
+        <a href="{% url 'chapter_delete' chapter.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        {% endif %}
+    </div>
+</div>

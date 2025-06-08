@@ -1,31 +1,96 @@
-<!-- FILE: templates/stories/story_detail.html -->
-
 {% extends "base.html" %}
-
 {% block content %}
+
 <h2>{{ story.title }}</h2>
 <p><strong>By:</strong> {{ story.author.username }}</p>
 <p>{{ story.description }}</p>
-
 <hr>
-<h3>Chapters</h3>
+<h3>Story Flow</h3>
 
-{% for chapter in chapters %}
-<div class="card mb-4 {% if chapter == main_chapter %}border-primary{% endif %}">
-    <div class="card-body">
-        <h4 class="card-title">{{ chapter.title }}</h4>
-        <p class="card-text">{{ chapter.content|linebreaks }}</p>
-        <p class="text-muted"><em>By {{ chapter.author.username }}</em></p>
+{% for branch in branches %}
+{% with parent=branch.parent main=branch.main alts=branch.alternatives %}
+{% with total=alts|length|add:1 chapter_no=forloop.counter %}
 
-        {% if story.allow_contributions or story.author == user %}
-        <a href="{% url 'chapter_create' story.id %}?parent={{ chapter.id }}" class="btn btn-outline-primary mt-2">
-            ➕ Add your chapter to this story
-        </a>
-        {% endif %}
+<div id="carousel-{{ parent.id }}" class="carousel slide mb-4">
+
+    {# ---------------- Indicators ---------------- #}
+    {% if total > 1 %}
+    <div class="carousel-indicators">
+        {# parent indicator #}
+        <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="0"
+            class="{% if main %}{% if main == parent %}active{% endif %}{% else %}active{% endif %}"
+            aria-current="{% if main %}{% if main == parent %}true{% endif %}{% else %}true{% endif %}"
+            aria-label="Slide 1">
+        </button>
+
+        {# child indicators #}
+        {% for child in alts %}
+        <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="{{ forloop.counter }}"
+            class="{% if main %}{% if child == main %}active{% endif %}{% else %}{% if forloop.first %}active{% endif %}{% endif %}"
+            aria-current="{% if main %}{% if child == main %}true{% endif %}{% else %}{% if forloop.first %}true{% endif %}{% endif %}"
+            aria-label="Slide {{ forloop.counter|add:1 }}">
+        </button>
+        {% endfor %}
     </div>
+    {% endif %}
+
+    {# ---------------- Slides ---------------- #}
+    <div class="carousel-inner">
+
+        {# parent slide #}
+        <div class="carousel-item {% if main %}{% if main == parent %}active{% endif %}{% else %}active{% endif %}">
+            <div class="card {% if main == parent %}border-primary shadow-sm{% endif %}">
+                <div class="card-header bg-light">
+                    <strong>Chapter {{ chapter_no }}</strong> — {{ parent.title }}
+                </div>
+                <div class="card-body">
+                    {{ parent.content|linebreaks }}
+                    <p class="text-muted mb-0"><em>By {{ parent.author.username }}</em></p>
+                </div>
+            </div>
+        </div>
+
+        {# child slides #}
+        {% for child in alts %}
+        <div
+            class="carousel-item {% if main %}{% if child == main %}active{% endif %}{% else %}{% if forloop.first %}active{% endif %}{% endif %}">
+            <div class="card {% if child == main %}border-primary shadow-sm{% endif %}">
+                <div class="card-header bg-light">
+                    <strong>Chapter {{ chapter_no }}</strong> — {{ child.title }}
+                </div>
+                <div class="card-body">
+                    {{ child.content|linebreaks }}
+                    <p class="text-muted mb-0"><em>By {{ child.author.username }}</em></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# ---------------- Controls ---------------- #}
+    {% if total > 1 %}
+    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    {% endif %}
 </div>
-{% empty %}
-<p>This story has no chapters yet.</p>
+
+{# ------------- Add-chapter button ------------- #}
+{% if story.allow_contributions or story.author == user %}
+<div class="text-end mb-4">
+    <a href="{% url 'chapter_create' story.id %}?parent={{ parent.id }}" class="btn btn-outline-primary">
+        ➕ Add your chapter to this story
+    </a>
+</div>
+{% endif %}
+
+{% endwith %}
+{% endwith %}
 {% endfor %}
 
 {% endblock %}
