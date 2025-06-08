@@ -1,26 +1,18 @@
 <!-- FILE: templates/stories/story_list.html -->
 
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Top Stories</title>
-</head>
+{% block content %}
+<h2>Top Stories</h2>
 
-<body>
-    <h2>Top Stories</h2>
-
-    {% for story in stories %}
-    <div>
-        <h3>{{ story.title }}</h3>
-        <p>{{ story.description }}</p>
-        <p>By {{ story.author.username }}</p>
-        <a href="{% url 'story_detail' story.id %}">Read More</a>
-    </div>
-    <hr>
-    {% empty %}
-    <p>No stories yet.</p>
-    {% endfor %}
-</body>
-
-</html>
+{% for story in stories %}
+<div class="mb-4">
+    <h3>{{ story.title }}</h3>
+    <p>{{ story.description|truncatewords:100 }}</p>
+    <p><strong>By:</strong> {{ story.author.username }}</p>
+    <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-primary">Read More</a>
+</div>
+{% empty %}
+<p>No stories yet.</p>
+{% endfor %}
+{% endblock %}
