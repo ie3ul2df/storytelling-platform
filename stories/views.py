@@ -6,9 +6,14 @@ from .forms import RegisterForm
 from .models import Story, Chapter, Rating
 from .forms import StoryForm, ChapterForm
 
+
+# -----------------------------------------------
+
 def story_list(request):
     stories = Story.objects.filter(is_public=True).order_by('-created_on')
     return render(request, 'stories/story_list.html', {'stories': stories})
+
+# -----------------------------------------------
 
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
@@ -17,6 +22,8 @@ def story_detail(request, story_id):
         'story': story,
         'chapters': chapters
     })
+
+# -----------------------------------------------
 
 @login_required
 def story_create(request):
@@ -42,9 +49,15 @@ def story_create(request):
         form = StoryForm()
     return render(request, 'stories/story_form.html', {'form': form})
 
+# -----------------------------------------------
+
 @login_required
 def chapter_create(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
+    parent_id = request.GET.get('parent')
+    parent_chapter = None
+    if parent_id:
+        parent_chapter = get_object_or_404(Chapter, id=parent_id, story=story)
 
     if not story.allow_contributions and request.user != story.author:
         return redirect('story_detail', story_id=story.id)
@@ -55,12 +68,19 @@ def chapter_create(request, story_id):
             chapter = form.save(commit=False)
             chapter.story = story
             chapter.author = request.user
+            chapter.parent = parent_chapter
             chapter.save()
             return redirect('story_detail', story_id=story.id)
     else:
         form = ChapterForm()
 
-    return render(request, 'stories/chapter_form.html', {'form': form, 'story': story})
+    return render(request, 'stories/chapter_form.html', {
+        'form': form,
+        'story': story,
+        'parent': parent_chapter,
+    })
+
+# -----------------------------------------------
 
 def register_view(request):
     if request.method == 'POST':
@@ -72,6 +92,8 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
+
+# -----------------------------------------------
 
 @login_required
 def profile_view(request):
