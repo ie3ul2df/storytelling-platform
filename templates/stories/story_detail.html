@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+{% load static %}
 <h2>{{ story.title }}</h2>
 <p><strong>By:</strong> {{ story.author.username }}</p>
 <p>{{ story.description }}</p>
@@ -8,89 +8,57 @@
 <h3>Story Flow</h3>
 
 {% for branch in branches %}
-{% with parent=branch.parent main=branch.main alts=branch.alternatives %}
-{% with total=alts|length|add:1 chapter_no=forloop.counter %}
+<div id="carousel-{{ branch.parent.id }}" class="carousel slide mb-4">
 
-<div id="carousel-{{ parent.id }}" class="carousel slide mb-4">
+    {% include "stories/_carousel_controls.html" with parent=branch.parent sorted_chapters=branch.sorted_chapters %}
 
-    {# ---------------- Indicators ---------------- #}
-    {% if total > 1 %}
-    <div class="carousel-indicators">
-        {# parent indicator #}
-        <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="0"
-            class="{% if main %}{% if main == parent %}active{% endif %}{% else %}active{% endif %}"
-            aria-current="{% if main %}{% if main == parent %}true{% endif %}{% else %}true{% endif %}"
-            aria-label="Slide 1">
-        </button>
-
-        {# child indicators #}
-        {% for child in alts %}
-        <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="{{ forloop.counter }}"
-            class="{% if main %}{% if child == main %}active{% endif %}{% else %}{% if forloop.first %}active{% endif %}{% endif %}"
-            aria-current="{% if main %}{% if child == main %}true{% endif %}{% else %}{% if forloop.first %}true{% endif %}{% endif %}"
-            aria-label="Slide {{ forloop.counter|add:1 }}">
-        </button>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {# ---------------- Slides ---------------- #}
     <div class="carousel-inner">
-
-        {# parent slide #}
-        <div class="carousel-item {% if main %}{% if main == parent %}active{% endif %}{% else %}active{% endif %}">
-            <div class="card {% if main == parent %}border-primary shadow-sm{% endif %}">
-                <div class="card-header bg-light">
-                    <strong>Chapter {{ chapter_no }}</strong> — {{ parent.title }}
+        {% for chapter in branch.sorted_chapters %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="card {% if forloop.first %}border-primary shadow-sm{% endif %}">
+                <div
+                    class="card-header bg-light d-flex flex-column flex-sm-row justify-content-between align-items-center">
+                    <span class="mb-2 mb-sm-0">
+                        <strong>Chapter {{ forloop.counter }}</strong> — {{ chapter.title }}
+                        {% if chapter.id == branch.parent.id %}
+                        <span class="badge bg-secondary ms-2">Original</span>
+                        {% endif %}
+                    </span>
+                    <small class="avg ms-2 text-muted d-flex align-items-center gap-1">
+                        <span class="avg-stars" data-average="{{ chapter.avg_rating }}"></span>
+                        ({{ chapter.avg_rating|floatformat:1 }}/5) —
+                        {{ chapter.rating_count }} user{{ chapter.rating_count|pluralize }} rated
+                    </small>
                 </div>
                 <div class="card-body">
-                    {{ parent.content|linebreaks }}
-                    <p class="text-muted mb-0"><em>By {{ parent.author.username }}</em></p>
-                </div>
-            </div>
-        </div>
-
-        {# child slides #}
-        {% for child in alts %}
-        <div
-            class="carousel-item {% if main %}{% if child == main %}active{% endif %}{% else %}{% if forloop.first %}active{% endif %}{% endif %}">
-            <div class="card {% if child == main %}border-primary shadow-sm{% endif %}">
-                <div class="card-header bg-light">
-                    <strong>Chapter {{ chapter_no }}</strong> — {{ child.title }}
-                </div>
-                <div class="card-body">
-                    {{ child.content|linebreaks }}
-                    <p class="text-muted mb-0"><em>By {{ child.author.username }}</em></p>
+                    {% if user.is_authenticated %}
+                    <div class="rating-stars mb-2" data-chapter="{{ chapter.id }}"
+                        data-user-rating="{{ chapter.user_rating.value|default:'0' }}">
+                        <strong>Rank this chapter:</strong>
+                        <span class="stars">
+                            {% for i in "12345"|make_list %}
+                            <i class="star" data-value="{{ forloop.counter }}">&#9733;</i>
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {{ chapter.content|linebreaks }}
+                    <p class="text-muted mb-0"><em>By {{ chapter.author.username }}</em></p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    {# ---------------- Controls ---------------- #}
-    {% if total > 1 %}
-    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
+    {% if story.allow_contributions or story.author == user %}
+    <div class="text-end mb-4">
+        <a href="{% url 'chapter_create' story.id %}?parent={{ branch.parent.id }}" class="btn btn-outline-primary">
+            ➕ Add your chapter to this story
+        </a>
+    </div>
     {% endif %}
 </div>
-
-{# ------------- Add-chapter button ------------- #}
-{% if story.allow_contributions or story.author == user %}
-<div class="text-end mb-4">
-    <a href="{% url 'chapter_create' story.id %}?parent={{ parent.id }}" class="btn btn-outline-primary">
-        ➕ Add your chapter to this story
-    </a>
-</div>
-{% endif %}
-
-{% endwith %}
-{% endwith %}
 {% endfor %}
 
+<script src="{% static 'js/rating.js' %}"></script>
 {% endblock %}
