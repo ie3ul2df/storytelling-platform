@@ -1,9 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<h2>{{ story.title }}</h2>
+
+<div class="p-2 rounded d-flex justify-content-between align-items-center bg-secondary">
+    <h2 class="mt-2 text-muted fw-bold">{{ story.title }}</h2>
+    {% with story.total_rank as rating %}
+    <span class="ms-4 text-muted fw-bold"> 🏆
+        {% for i in "12345"|make_list %}
+        {% if forloop.counter <= rating %} ★ {% else %} ☆ {% endif %} {% endfor %} ({{ rating|floatformat:"1" }}/5)
+            </span>
+            {% endwith %}
+</div>
+
 <p><strong>By:</strong> {{ story.author.username }}</p>
 <p>{{ story.description }}</p>
+
 <hr>
 <h3>Story Flow</h3>
 
@@ -51,14 +62,23 @@
     </div>
 
     {% if story.allow_contributions or story.author == user %}
-    <div class="text-end mb-4">
-        <a href="{% url 'chapter_create' story.id %}?parent={{ branch.parent.id }}" class="btn btn-outline-primary">
-            ➕ Add your chapter to this story
+    <div class="text-end mt-3 d-flex flex-column align-items-end gap-2">
+
+        {% with branch.sorted_chapters|first as root_chapter %}
+        <a href="{% url 'chapter_create' story.id %}?parent={{ root_chapter.id }}" class="btn btn-outline-secondary">
+            + Create your Chapter 2
         </a>
+        {% endwith %}
+
     </div>
     {% endif %}
+
 </div>
 {% endfor %}
-
+{% with branch.sorted_chapters|last as last_chapter %}
+<a href="{% url 'chapter_create' story.id %}?parent={{ last_chapter.id }}" class="btn btn-outline-primary">
+    ➕ Create New Chapter
+</a>
+{% endwith %}
 <script src="{% static 'js/rating.js' %}"></script>
 {% endblock %}
