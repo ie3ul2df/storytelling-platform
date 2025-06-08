@@ -14,8 +14,12 @@ from .forms import StoryForm, ChapterForm
 # -----------------------------------------------
 
 def story_list(request):
-    stories = Story.objects.filter(is_public=True).order_by('-created_on')
-    return render(request, 'stories/story_list.html', {'stories': stories})
+    stories = list(Story.objects.filter(is_public=True))
+
+    # Sort by total_rank descending
+    stories.sort(key=lambda s: s.total_rank or 0, reverse=True)
+
+    return render(request, "stories/story_list.html", {"stories": stories})
 
 # -----------------------------------------------
 
