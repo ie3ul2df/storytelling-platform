@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l=%(pn(oiqyn*e7!4p6-c&+(t6nc+)(w3p(1leo1z^7h*ei71a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'DEVELOPMENT' in os.environ  # True if you set it locally
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['storytelling-platform.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'cloudinary',
     'cloudinary_storage',
+    'django.contrib.staticfiles',
     'stories',
 ]
 
@@ -127,6 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',        # your development directory
