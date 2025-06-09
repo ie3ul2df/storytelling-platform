@@ -2,44 +2,133 @@
 {% load static %}
 
 {% block content %}
-<h1 class="mb-4">Top Stories</h1>
+<h1 class="mb-4">Story Home</h1>
+
+<!-- Filter & Sort Form -->
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-12 col-md-3">
+        <label class="form-label" for="q">Search</label>
+        <input type="text" name="q" id="q" value="{{ query }}" class="form-control" placeholder="Title or description">
+    </div>
+    <div class="col-12 col-md-2">
+        <label class="form-label" for="author">Author</label>
+        <input type="text" name="author" id="author" value="{{ author }}" class="form-control" placeholder="Author">
+    </div>
+    <div class="col-12 col-md-2">
+        <label class="form-label" for="min_rating">Min Rating</label>
+        <select name="min_rating" id="min_rating" class="form-select">
+            <option value="" {% if not min_rating %}selected{% endif %}>Any</option>
+            {% for i in "12345"|make_list %}
+            {% if min_rating %}
+            {% if min_rating == i %}
+            <option value="{{ i }}" selected>{{ i }}+</option>
+            {% else %}
+            <option value="{{ i }}">{{ i }}+</option>
+            {% endif %}
+            {% else %}
+            <option value="{{ i }}">{{ i }}+</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+
+    </div>
+
+    <div class="col-12 col-md-3">
+        <label class="form-label" for="sort">Sort By</label>
+        <select name="sort" id="sort" class="form-select">
+            {% if sort == "top" %}
+            <option value="top" selected>Top Ranked</option>
+            {% else %}
+            <option value="top">Top Ranked</option>
+            {% endif %}
+            {% if sort == "newest" %}
+            <option value="newest" selected>Newest</option>
+            {% else %}
+            <option value="newest">Newest</option>
+            {% endif %}
+            {% if sort == "oldest" %}
+            <option value="oldest" selected>Oldest</option>
+            {% else %}
+            <option value="oldest">Oldest</option>
+            {% endif %}
+        </select>
+    </div>
+
+
+    <div class="col-12 col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Apply</button>
+    </div>
+</form>
 
 <div class="row">
-    {% for story in stories %}
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-            {% if story.image %}
-            <img src="{{ story.image.url }}" class="card-img-top" alt="{{ story.title }}"
-                style="height: 200px; object-fit: cover;">
-            {% else %}
-            <img src="https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-story-image_ttrfqb.webp"
-                class="card-img-top" alt="Default story image" style="height: 200px; object-fit: cover;">
-            {% endif %}
-
-
+    {% for story in page_obj %}
+    <div class="col-12 col-sm-6 col-lg-4 mb-4 d-flex">
+        <div class="card shadow-sm w-100 h-100 d-flex flex-column">
+            <div class="ratio ratio-16x9" style="max-height: 240px; min-height: 200px;">
+                {% if story.image %}
+                <img src="{{ story.image.url }}" class="card-img-top" alt="{{ story.title }}"
+                    style="object-fit: cover; width: 100%; height: 100%; border-radius: 0.5rem;">
+                {% else %}
+                <img src="https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-story-image_ttrfqb.webp"
+                    class="card-img-top" alt="Default story image"
+                    style="object-fit: cover; width: 100%; height: 100%; border-radius: 0.5rem;">
+                {% endif %}
+            </div>
             <div class="card-body d-flex flex-column">
                 <h4 class="card-title">{{ story.title }}</h4>
                 <p class="card-text text-muted">{{ story.description|truncatewords:25 }}</p>
                 <p class="text-muted mb-1"><strong>By:</strong> {{ story.author.username }}</p>
-
-                {% with story.total_rank|default:0 as rating %}
+                {% with story.avg_rating|default:0 as rating %}
                 <div class="text-muted small mb-2">
                     🏆
                     {% for i in "12345"|make_list %}
-                    {% if forloop.counter <= rating|floatformat:"0"|add:"0" %} ★ {% else %} ☆ {% endif %} {% endfor %}
-                        ({{ rating|floatformat:"1" }}/5) </div>
-                        {% endwith %}
-
-                        <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-primary mt-auto">
-                            Read More 👀
-                        </a>
+                    {% if forloop.counter <= rating|floatformat:"0"|add:"0" %} <span style="color: #f39c12;">★</span>
+                        {% else %}
+                        <span style="color: #ccc;">★</span>
+                        {% endif %}
+                        {% endfor %}
+                        ({{ rating|floatformat:"1" }}/5)
                 </div>
+                {% endwith %}
+                <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-primary mt-auto">
+                    Read More 👀
+                </a>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12">
-            <p>No stories yet.</p>
-        </div>
-        {% endfor %}
     </div>
-    {% endblock %}
+    {% empty %}
+    <div class="col-12">
+        <p>No stories yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination Controls -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Stories pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ params }}">&laquo; Prev</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo; Prev</span></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item"><a
+                class="page-link" href="?page={{ num }}&{{ params }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ params }}">Next &raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+            {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

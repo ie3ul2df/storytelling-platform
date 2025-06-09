@@ -5,7 +5,8 @@ import json
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Avg, Count  
+from django.db.models import F, Q, Avg, Count
+from django.core.paginator import Paginator
 from .forms import RegisterForm, RatingForm
 from .models import Story, Chapter, Rating, UserProfile, StoryRating
 from .forms import StoryForm, ChapterForm, UserProfileForm
@@ -20,12 +21,52 @@ def test_template(request):
 # -----------------------------------------------
 
 def story_list(request):
-    stories = list(Story.objects.filter(is_public=True))
+    query = request.GET.get('q', '').strip()
+    author = request.GET.get('author', '').strip()
+    min_rating = request.GET.get('min_rating', '').strip()
+    sort = request.GET.get('sort', 'top')
 
-    # Sort by total_rank descending
-    stories.sort(key=lambda s: s.total_rank or 0, reverse=True)
+    # Use a DIFFERENT annotation name to avoid property conflict
 
-    return render(request, "stories/story_list.html", {"stories": stories})
+    # Annotate with avg_rating only
+    stories_qs = Story.objects.filter(is_public=True).annotate(
+        avg_rating=Avg('ratings__value')
+    )
+
+
+    if query:
+        stories_qs = stories_qs.filter(Q(title__icontains=query) | Q(description__icontains=query))
+    if author:
+        stories_qs = stories_qs.filter(author__username__icontains=author)
+    if min_rating and min_rating.isdigit():
+        stories_qs = stories_qs.filter(avg_rating__gte=float(min_rating))
+
+    if sort == "newest":
+        stories_qs = stories_qs.order_by('-created_on')
+    elif sort == "oldest":
+        stories_qs = stories_qs.order_by('created_on')
+    else:  # Top Ranked
+        # Put unrated stories at the end
+        stories_qs = stories_qs.order_by(F('avg_rating').desc(nulls_last=True))
+
+
+
+    paginator = Paginator(stories_qs, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    params = request.GET.copy()
+    if 'page' in params:
+        params.pop('page')
+
+    return render(request, "stories/story_list.html", {
+        "page_obj": page_obj,
+        "params": params.urlencode(),
+        "query": query,
+        "author": author,
+        "min_rating": min_rating,
+        "sort": sort,
+    })
 
 
 # -----------------------------------------------
