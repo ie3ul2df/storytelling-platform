@@ -1,1 +1,1 @@
-web: gunicorn storytelling_platform.wsgi:application
+web: gunicorn storytelling_platform.wsgi
