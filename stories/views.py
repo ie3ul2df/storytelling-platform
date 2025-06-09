@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg, Count  
 from .forms import RegisterForm, RatingForm
-from .models import Story, Chapter, Rating, UserProfile
+from .models import Story, Chapter, Rating, UserProfile, StoryRating
 from .forms import StoryForm, ChapterForm, UserProfileForm
 from . import models
 
@@ -41,29 +41,37 @@ def story_detail(request, story_id):
             root.children.all().annotate(avg_rating=Avg("ratings__value"))
         )
 
-        # Add the parent with avg_rating
         root.avg_rating = root.average_rating
-        all_chapters = [root] + children
+        if request.user.is_authenticated:
+            root.user_rating = Rating.objects.filter(chapter=root, user=request.user).first()
 
-        # Add user rating and rating count
-        for ch in all_chapters:
+        for ch in children:
             ch.rating_count = ch.ratings.count()
             if request.user.is_authenticated:
                 ch.user_rating = Rating.objects.filter(chapter=ch, user=request.user).first()
 
-        # Sort combined list by avg_rating desc
-        sorted_chapters = sorted(all_chapters, key=lambda c: c.avg_rating or 0, reverse=True)
+        sorted_chapters = sorted([root] + children, key=lambda c: c.avg_rating or 0, reverse=True)
 
         branches.append({
-            'parent': root,  # keep for context if needed
+            'parent': root,
             'sorted_chapters': sorted_chapters,
         })
+
+    original_chapter = story.chapters.order_by('created_on').first()
+
+    # --- Story-level user rating ---
+    story_user_rating = 0
+    if request.user.is_authenticated:
+        obj = StoryRating.objects.filter(story=story, user=request.user).first()
+        if obj:
+            story_user_rating = obj.value  # .value should be an int field
 
     return render(request, 'stories/story_detail.html', {
         'story': story,
         'branches': branches,
+        'original_chapter': original_chapter,
+        'story_user_rating': story_user_rating,  
     })
-
 
 
 # -----------------------------------------------
@@ -283,3 +291,29 @@ def story_delete(request, story_id):
         return redirect("profile")
     return render(request, "stories/story_confirm_delete.html", {"story": story})
 
+# -----------------------------------------------
+
+@require_POST
+@login_required
+def rate_story(request):
+    try:
+        data = json.loads(request.body)
+        story_id = int(data.get("story_id"))
+        value = int(data.get("rating"))
+
+        if not (1 <= value <= 5):
+            return HttpResponseBadRequest("Invalid rating")
+
+        story = get_object_or_404(Story, pk=story_id)
+
+        StoryRating.objects.update_or_create(
+            story=story,
+            user=request.user,
+            defaults={"value": value}
+        )
+
+        avg = story.average_rating
+        return JsonResponse({"success": True, "average": round(avg, 1)})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

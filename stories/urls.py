@@ -15,5 +15,6 @@ urlpatterns = [
     path('story/<int:story_id>/delete/', views.story_delete, name='story_delete'),
     path('accounts/profile/', views.profile_view, name='profile'),
     path('ajax/rate/', views.ajax_rate_chapter, name='ajax_rate_chapter'),
+    path("rate-story/", views.rate_story, name="rate_story"),
     path('test/', views.test_template, name='test_template'),
 ]

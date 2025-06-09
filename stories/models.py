@@ -14,7 +14,6 @@ class Story(models.Model):
     is_public            = models.BooleanField(default=True)
     allow_contributions  = models.BooleanField(default=True)
     created_on           = models.DateTimeField(auto_now_add=True)
-    # image                = models.ImageField(upload_to='stories/', blank=True, null=True)
     image = CloudinaryField(
         'image',
         default='default-story-image_ttrfqb',
@@ -63,13 +62,21 @@ class Story(models.Model):
     @property
     def total_rank(self):
         """
-        Calculates the average of the ratings of the best chapters across all branches.
+        Combines average rating of top-rated chapters + direct story rating.
         """
-        chapters = self.first_slide_chapters
-        if not chapters:
+        chapter_ratings = [ch.average_rating for ch in self.first_slide_chapters if ch.average_rating]
+        story_rating = self.average_rating  # direct story ratings (StoryRating)
+        all_ratings = chapter_ratings + ([story_rating] if story_rating else [])
+        if not all_ratings:
             return 0
-        # return sum(ch.average_rating for ch in chapters) / len(chapters)
-        return round(sum(ch.average_rating for ch in chapters) / len(chapters), 2)
+        return round(sum(all_ratings) / len(all_ratings), 2)
+
+    @property
+    def average_rating(self):
+        return self.ratings.aggregate(Avg("value"))["value__avg"] or 0
+
+
+
 #--------------------------------------------------
 
 class Chapter(models.Model):
@@ -132,3 +139,13 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.userprofile.save()
+
+#--------------------------------------------------
+    
+class StoryRating(models.Model):
+    story = models.ForeignKey("Story", related_name="ratings", on_delete=models.CASCADE)
+    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    value = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ('story', 'user')

@@ -22,6 +22,19 @@
 
 
 <p><strong>By:</strong> {{ story.author.username }}</p>
+{% if user.is_authenticated %}
+<div class="rating-stars story-rating" data-story="{{ story.id }}"
+    data-user-rating="{{ story_user_rating|default:'0' }}">
+    <strong>Rate this story:</strong>
+    <span class="stars">
+        {% for i in "12345"|make_list %}
+        <i class="star" data-value="{{ forloop.counter }}">&#9733;</i>
+        {% endfor %}
+    </span>
+</div>
+{% endif %}
+
+
 <p>{{ story.description }}</p>
 <hr>
 <h3>Story Flow</h3>
@@ -51,7 +64,7 @@
                 </div>
                 <div class="card-body">
                     {% if user.is_authenticated %}
-                    <div class="rating-stars mb-2" data-chapter="{{ chapter.id }}"
+                    <div class="rating-stars chapter-rating" data-chapter="{{ chapter.id }}"
                         data-user-rating="{{ chapter.user_rating.value|default:'0' }}">
                         <strong>Rank this chapter:</strong>
                         <span class="stars">
@@ -61,6 +74,8 @@
                         </span>
                     </div>
                     {% endif %}
+
+
                     {{ chapter.content|linebreaks }}
                     <p class="text-muted mb-0"><em>By {{ chapter.author.username }}</em></p>
 

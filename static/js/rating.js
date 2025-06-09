@@ -13,31 +13,26 @@ function getCookie(name) {
   return cookieValue;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".rating-stars").forEach((container) => {
+function renderStars(stars, value) {
+  stars.forEach((s, i) => {
+    s.classList.toggle("rated", i < value);
+    s.style.color = i < value ? "#f39c12" : "#ccc";
+  });
+}
+
+// --- CHAPTER RATING ---
+function initChapterRatings() {
+  document.querySelectorAll(".rating-stars.chapter-rating").forEach((container) => {
     const stars = container.querySelectorAll(".star");
     const chapterId = container.getAttribute("data-chapter");
+    let userRating = parseInt(container.getAttribute("data-user-rating")) || 0;
 
-    // Set initial color on page load
-    const userRating = parseInt(container.getAttribute("data-user-rating")) || 0;
-    stars.forEach((s, i) => {
-      s.style.color = i < userRating ? "#f39c12" : "#ccc";
-    });
+    // Set initial star colors
+    renderStars(stars, userRating);
 
     stars.forEach((star, index) => {
-      star.addEventListener("mouseenter", () => {
-        stars.forEach((s, i) => {
-          s.style.color = i <= index ? "#f39c12" : "#ccc";
-        });
-      });
-
-      star.addEventListener("mouseleave", () => {
-        const rated = parseInt(container.getAttribute("data-user-rating")) || 0;
-        stars.forEach((s, i) => {
-          s.style.color = i < rated ? "#f39c12" : "#ccc";
-        });
-      });
-
+      star.addEventListener("mouseenter", () => renderStars(stars, index + 1));
+      star.addEventListener("mouseleave", () => renderStars(stars, userRating));
       star.addEventListener("click", () => {
         const value = parseInt(star.getAttribute("data-value"));
 
@@ -52,15 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
+              userRating = value;
               container.setAttribute("data-user-rating", value);
+              renderStars(stars, value);
 
-              // Update star colors
-              stars.forEach((s, i) => {
-                s.style.color = i < value ? "#f39c12" : "#ccc";
-              });
-
-              // Safely update avg text
-              const avgElem = container.querySelector(".avg") || container.parentElement.querySelector(".avg");
+              // Update average text if present
+              const avgElem = container.parentElement.querySelector(".avg");
               if (avgElem) {
                 avgElem.innerText = `(${data.average}/5) — ${data.count} user${data.count !== 1 ? "s" : ""} rated`;
               }
@@ -75,24 +67,75 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
-});
+}
 
-// Render readonly average stars
-document.querySelectorAll(".avg-stars").forEach((container) => {
-  const average = parseFloat(container.getAttribute("data-average"));
-  const fullStars = Math.floor(average);
-  const halfStar = average - fullStars >= 0.5;
+// --- STORY RATING ---
+function initStoryRatings() {
+  document.querySelectorAll(".rating-stars.story-rating").forEach((container) => {
+    const stars = container.querySelectorAll(".star");
+    const storyId = container.getAttribute("data-story");
+    let userRating = parseInt(container.getAttribute("data-user-rating")) || 0;
 
-  let starsHTML = "";
-  for (let i = 1; i <= 5; i++) {
-    if (i <= fullStars) {
-      starsHTML += "★";
-    } else {
-      starsHTML += "☆";
+    // Set initial star colors
+    renderStars(stars, userRating);
+
+    stars.forEach((star, index) => {
+      star.addEventListener("mouseenter", () => renderStars(stars, index + 1));
+      star.addEventListener("mouseleave", () => renderStars(stars, userRating));
+      star.addEventListener("click", () => {
+        const value = parseInt(star.getAttribute("data-value"));
+
+        fetch("/rate-story/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({ story_id: storyId, rating: value }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              userRating = value;
+              container.setAttribute("data-user-rating", value);
+              renderStars(stars, value);
+
+              // Optionally, update any average display if you have it
+              // Example:
+              // const avgElem = container.parentElement.querySelector(".avg");
+              // if (avgElem) {
+              //   avgElem.innerText = `(${data.average}/5) — ${data.count} rated`;
+              // }
+            } else {
+              alert("Rating error: " + data.error);
+            }
+          })
+          .catch((err) => {
+            console.error("Fetch error:", err);
+            alert("Something went wrong. Please try again.");
+          });
+      });
+    });
+  });
+}
+
+// --- READ-ONLY AVERAGE STARS ---
+function renderAvgStars() {
+  document.querySelectorAll(".avg-stars").forEach((container) => {
+    const average = parseFloat(container.getAttribute("data-average")) || 0;
+    const fullStars = Math.floor(average);
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+      starsHTML += i <= fullStars ? "★" : "☆";
     }
-  }
+    container.innerHTML = starsHTML;
+    container.style.color = "#999";
+    container.style.fontSize = "1.2rem";
+  });
+}
 
-  container.innerHTML = starsHTML;
-  container.style.color = "#999";
-  container.style.fontSize = "1.2rem";
+document.addEventListener("DOMContentLoaded", () => {
+  initChapterRatings();
+  initStoryRatings();
+  renderAvgStars();
 });
