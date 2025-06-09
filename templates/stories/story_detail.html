@@ -14,10 +14,12 @@
 </div>
 
 {% if story.image %}
-<div class="my-3">
-    <img src="{{ story.image.url }}" alt="{{ story.title }}" class="img-fluid rounded shadow-sm">
-</div>
+<img src="{{ story.image.url }}" class="card-img-top" alt="{{ story.title }}" style="height: 200px; object-fit: cover;">
+{% else %}
+<img src="https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-story-image_ttrfqb.webp"
+    class="card-img-top" alt="Default story image" style="height: 200px; object-fit: cover;">
 {% endif %}
+
 
 <p><strong>By:</strong> {{ story.author.username }}</p>
 <p>{{ story.description }}</p>

@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.dispatch import receiver
@@ -13,7 +14,13 @@ class Story(models.Model):
     is_public            = models.BooleanField(default=True)
     allow_contributions  = models.BooleanField(default=True)
     created_on           = models.DateTimeField(auto_now_add=True)
-    image                = models.ImageField(upload_to='stories/', blank=True, null=True)
+    # image                = models.ImageField(upload_to='stories/', blank=True, null=True)
+    image = CloudinaryField(
+        'image',
+        default='default-story-image_ttrfqb',
+        blank=True,
+        null=True
+    )
 
     # highest-rated chapter helper (for homepage / detail view)
     @property
@@ -112,7 +119,13 @@ def average_rating(self):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='profiles/', default='default-profile.png')
+    # profile_image = models.ImageField(upload_to='profiles/', default='default-profile.png')
+    profile_image = CloudinaryField(
+        'image',
+        default='default-profile-image_oe2lqb',
+        blank=True,
+        null=True
+    )
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
