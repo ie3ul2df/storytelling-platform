@@ -1,36 +1,31 @@
-import os
 from pathlib import Path
+import os
 import dj_database_url
+from django.contrib.messages import constants as messages
 
-# Load environment variables if using env.py (for local development)
-if os.path.exists('env.py'):
+if os.path.isfile('env.py'):
     import env
 
-# Build paths inside the project
+# Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+# Security
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-default-key")
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-key')
-
-ALLOWED_HOSTS = [
-    '.herokuapp.com',
-    'localhost',
-    '127.0.0.1',
-]
-
-# Application definition
+# Installed Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',  # Needed for local dev with WhiteNoise
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
+    # 3rd-party
     'cloudinary',
     'cloudinary_storage',
 
@@ -38,6 +33,7 @@ INSTALLED_APPS = [
     'stories',
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -49,12 +45,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# URLs & WSGI
 ROOT_URLCONF = 'storytelling_platform.urls'
+WSGI_APPLICATION = 'storytelling_platform.wsgi.application'
 
+# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,17 +66,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'storytelling_platform.wsgi.application'
-
-# Database configuration
+# Database
 DATABASES = {
-    'default': dj_database_url.config(
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
-# Password validation
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.herokuapp.com",
+]
+
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -85,30 +84,35 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+# i18n
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Messages Styling
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert-success',
+    messages.ERROR: 'alert-danger',
+}
+
+# Static Files
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files via Cloudinary
+# Media via Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
-
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Redirect after login
+# Auth Redirect
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 
-# Default primary key field type
+# Default PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
