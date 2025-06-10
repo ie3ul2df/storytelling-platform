@@ -1,12 +1,13 @@
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-import json
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import F, Q, Avg, Count
 from django.core.paginator import Paginator
+from django.urls import reverse
+import json
 from .forms import RegisterForm, RatingForm
 from .models import Story, Chapter, Rating, UserProfile, StoryRating, Bookmark
 from .forms import StoryForm, ChapterForm, UserProfileForm
@@ -90,6 +91,13 @@ def story_detail(request, story_id):
     if request.user.is_authenticated:
         is_bookmarked = story.bookmarked_by.filter(user=request.user).exists()
 
+    is_following_author = False
+    if request.user.is_authenticated:
+        current_profile = request.user.userprofile
+        author_profile = story.author.userprofile
+        if current_profile != author_profile:
+            is_following_author = current_profile.is_following(author_profile)
+
     for root in root_chapters:
         children = list(
             root.children.all().annotate(avg_rating=Avg("ratings__value"))
@@ -126,6 +134,7 @@ def story_detail(request, story_id):
         'original_chapter': original_chapter,
         'story_user_rating': story_user_rating,  
         'is_bookmarked': is_bookmarked,
+        'is_following_author': is_following_author,
     })
 
 
@@ -208,32 +217,38 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
+    user = request.user
+    profile = user.userprofile
+
     search_query = request.GET.get("search", "")
     sort_by = request.GET.get("sort", "created_on")
-    stories = Story.objects.filter(author=request.user)
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related('story')
+
+    stories = Story.objects.filter(author=user)
+    bookmarks = Bookmark.objects.filter(user=user).select_related("story")
 
     if search_query:
         stories = stories.filter(title__icontains=search_query)
 
     if sort_by == "-average_rating":
-        stories = stories.annotate(avg=models.Avg("chapters__ratings__value")).order_by("-avg")
+        stories = stories.annotate(avg_rating=Avg("chapters__ratings__value")).order_by("-avg_rating")
     else:
         stories = stories.order_by("-created_on")
 
-    if request.method == "POST":
-        form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
-        if form.is_valid():
-            form.save()
-    else:
-        form = UserProfileForm(instance=request.user.userprofile)
+    form = UserProfileForm(request.POST or None, request.FILES or None, instance=profile)
+    if request.method == "POST" and form.is_valid():
+        form.save()
 
-    return render(request, "stories/profile.html", {
+    context = {
+        "profile": profile,
         "user_stories": stories,
         "profile_form": form,
         "bookmarks": bookmarks,
-    })
+        "following": profile.following.all(),
+        "followers": profile.followers.all(),
+        "sort": sort_by,
+    }
 
+    return render(request, "stories/profile.html", context)
 # -----------------------------------------------
 
 @login_required
@@ -392,3 +407,51 @@ def unbookmark_story(request, story_id):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return JsonResponse({"bookmarked": False, "story_id": story_id})
     return redirect("story_detail", story_id=story_id)
+
+# -----------------------------------------------
+
+@login_required
+@require_POST
+def toggle_follow(request, username):
+    target_user = get_object_or_404(User, username=username)
+    target_profile = get_object_or_404(UserProfile, user=target_user)
+    current_profile = request.user.userprofile
+
+    # Prevent following yourself
+    if current_profile == target_profile:
+        return redirect(request.POST.get('next') or reverse('profile', args=[username]))
+
+    if current_profile.is_following(target_profile):
+        current_profile.following.remove(target_profile)
+    else:
+        current_profile.following.add(target_profile)
+
+    # Redirect back to where the request came from (story detail or profile)
+    return redirect(request.POST.get('next') or reverse('profile', args=[username]))
+
+# -----------------------------------------------
+
+@login_required
+def public_profile_view(request, username):
+    target_user = get_object_or_404(User, username=username)
+
+    # Redirect to own profile if user tries to access their own public URL
+    if request.user.username == target_user.username:
+        return redirect("profile")
+
+    profile = get_object_or_404(UserProfile, user=target_user)
+    is_following = request.user.userprofile.is_following(profile)
+
+    public_stories = Story.objects.filter(author=target_user, is_public=True)
+    chapters_count = Chapter.objects.filter(story__author=target_user).count()
+
+    context = {
+        "profile": profile,
+        "user_stories": public_stories,
+        "chapters_count": chapters_count,
+        "followers": profile.followers.all(),
+        "following": profile.following.all(),
+        "is_following": is_following,
+    }
+
+    return render(request, "stories/public_profile.html", context)

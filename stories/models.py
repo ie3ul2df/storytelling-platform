@@ -126,13 +126,34 @@ def average_rating(self):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # profile_image = models.ImageField(upload_to='profiles/', default='default-profile.png')
     profile_image = CloudinaryField(
         'image',
         default='default-profile-image_oe2lqb',
         blank=True,
         null=True
     )
+    # Users this profile is following
+    following = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followers',
+        blank=True
+    )
+
+    def __str__(self):
+        return self.user.username
+
+    def is_following(self, other_profile):
+        return self.following.filter(pk=other_profile.pk).exists()
+
+    @property
+    def followers_count(self):
+        return self.followers.count()
+
+    @property
+    def following_count(self):
+        return self.following.count()
+    
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
@@ -162,3 +183,5 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"{self.user.username} bookmarked {self.story.title}"
+    
+#--------------------------------------------------

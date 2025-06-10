@@ -22,7 +22,11 @@
         <div class="col-12 col-md-8">
             <h2 class="fw-bold mb-2 text-primary">{{ story.title }}</h2>
             <div class="d-flex flex-wrap gap-3 align-items-center mb-2">
-                <span class="badge bg-secondary fs-6 px-3 py-2">By {{ story.author.username }}</span>
+                <a href="{% url 'public_profile' story.author.username %}"
+                    class="badge bg-secondary fs-6 px-3 py-2 text-decoration-none">
+                    By {{ story.author.username }}
+                </a>
+
                 {% with story.total_rank as rating %}
                 <span class="fs-5 text-warning d-flex align-items-center gap-1">
                     🏆
@@ -52,6 +56,30 @@
                 title="{% if is_bookmarked %}Remove Bookmark{% else %}Bookmark{% endif %}">
                 <i class="bi {% if is_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
             </button>
+            {% endif %}
+
+
+
+
+
+
+
+
+            {# Only show follow button if the viewer is authenticated and not the author #}
+            {% if user.is_authenticated and user.username != story.author.username %}
+            <form method="post" action="{% url 'toggle_follow' story.author.username %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                {% if is_following_author %}
+                <button type="submit" class="btn btn-outline-secondary">
+                    Unfollow {{ story.author.username }}
+                </button>
+                {% else %}
+                <button type="submit" class="btn btn-primary">
+                    Follow {{ story.author.username }}
+                </button>
+                {% endif %}
+            </form>
             {% endif %}
 
 
