@@ -4,10 +4,27 @@
 <div class="container py-4 text-center">
     <h2 class="fw-bold">{{ profile.user.username }}'s Profile</h2>
 
+    <p class="fw-bold">User's Full-name: {{ profile.full_name|default:profile.user.username }}</p>
+
+    {% if profile.contact_email %}
+    <p class="text-muted">📧 Contact: <a href="mailto:{{ profile.contact_email }}">{{ profile.contact_email }}</a></p>
+    {% endif %}
+
+
     {% if profile.profile_image %}
     <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="rounded-circle shadow my-3"
         style="width: 120px; height: 120px; object-fit: cover;">
     {% endif %}
+
+
+    {% if profile.about %}
+    <div class="text-start mx-auto my-4" style="max-width: 600px;">
+        <h5>📝 About Me</h5>
+        <p class="text-muted">{{ profile.about|linebreaks }}</p>
+    </div>
+    {% endif %}
+
+
 
     <form method="post" action="{% url 'toggle_follow' profile.user.username %}" class="mb-4">
         {% csrf_token %}

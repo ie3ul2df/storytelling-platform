@@ -49,4 +49,5 @@ class RatingForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['profile_image']
+        fields = ['profile_image', 'full_name', 'about', 'contact_email']
+

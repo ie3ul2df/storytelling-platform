@@ -5,10 +5,8 @@
 
     <div class="text-center mb-4">
         <h2 class="fw-bold">Welcome, {{ user.username }} 👋</h2>
-        {% if user.userprofile.profile_image %}
-        <img src="{{ user.userprofile.profile_image.url }}" alt="Profile Image" class="rounded-circle shadow mt-3"
+        <img src="{{ user.userprofile.profile_image_url }}" alt="Profile Image" class="rounded-circle shadow mt-3"
             style="width: 120px; height: 120px; object-fit: cover;">
-        {% endif %}
     </div>
 
     <form method="POST" enctype="multipart/form-data" action="{% url 'profile' %}" class="mb-5">
@@ -16,7 +14,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 {{ profile_form.as_p }}
-                <button type="submit" class="btn btn-primary w-100">Update Profile Image</button>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
             </div>
         </div>
     </form>

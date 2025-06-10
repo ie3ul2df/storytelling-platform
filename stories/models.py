@@ -128,10 +128,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = CloudinaryField(
         'image',
-        default='default-profile-image_oe2lqb',
         blank=True,
         null=True
     )
+    full_name = models.CharField(max_length=100, blank=True)
+    about = models.TextField(blank=True, verbose_name="About Me")
+    contact_email = models.EmailField(blank=True)
     # Users this profile is following
     following = models.ManyToManyField(
         'self',
@@ -154,12 +156,20 @@ class UserProfile(models.Model):
     def following_count(self):
         return self.following.count()
     
+    @property
+    def profile_image_url(self):
+        if not self.profile_image:
+            return "https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-profile-image_oe2lqb.jpg"
+        return self.profile_image.url
+
+    
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.userprofile.save()
+
 
 #--------------------------------------------------
     

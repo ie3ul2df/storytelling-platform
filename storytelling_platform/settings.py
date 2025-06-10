@@ -114,7 +114,7 @@ CLOUDINARY_STORAGE = {
 }
 
 # Auth Redirect
-LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGIN_REDIRECT_URL = '/'
 
 # Default PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
