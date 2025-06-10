@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import F, Q, Avg, Count
 from django.core.paginator import Paginator
 from .forms import RegisterForm, RatingForm
-from .models import Story, Chapter, Rating, UserProfile, StoryRating
+from .models import Story, Chapter, Rating, UserProfile, StoryRating, Bookmark
 from .forms import StoryForm, ChapterForm, UserProfileForm
 from . import models
 
@@ -21,43 +21,51 @@ def test_template(request):
 # -----------------------------------------------
 
 def story_list(request):
-    query = request.GET.get('q', '').strip()
-    author = request.GET.get('author', '').strip()
+    query      = request.GET.get('q', '').strip()
+    author     = request.GET.get('author', '').strip()
     min_rating = request.GET.get('min_rating', '').strip()
-    sort = request.GET.get('sort', 'top')
+    sort       = request.GET.get('sort', 'top')
 
-    # Use a DIFFERENT annotation name to avoid property conflict
-
-    # Annotate with avg_rating only
+    # Base queryset with avg_rating annotation
     stories_qs = Story.objects.filter(is_public=True).annotate(
         avg_rating=Avg('ratings__value')
     )
 
-
+    # Filters
     if query:
-        stories_qs = stories_qs.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        stories_qs = stories_qs.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
     if author:
         stories_qs = stories_qs.filter(author__username__icontains=author)
-    if min_rating and min_rating.isdigit():
+    if min_rating.isdigit():
         stories_qs = stories_qs.filter(avg_rating__gte=float(min_rating))
 
+    # Sorting
     if sort == "newest":
         stories_qs = stories_qs.order_by('-created_on')
     elif sort == "oldest":
         stories_qs = stories_qs.order_by('created_on')
-    else:  # Top Ranked
-        # Put unrated stories at the end
+    else:  # top ranked, unrated last
         stories_qs = stories_qs.order_by(F('avg_rating').desc(nulls_last=True))
 
+    # Pagination
+    paginator    = Paginator(stories_qs, 6)
+    page_number  = request.GET.get('page')
+    page_obj     = paginator.get_page(page_number)
 
+    # Now that page_obj exists, get bookmarked IDs
+    bookmarked_story_ids = set()
+    if request.user.is_authenticated:
+        bookmarked_story_ids = set(
+            Bookmark.objects
+                    .filter(user=request.user, story__in=page_obj.object_list)
+                    .values_list('story_id', flat=True)
+        )
 
-    paginator = Paginator(stories_qs, 6)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
+    # Preserve other GET params in pagination links
     params = request.GET.copy()
-    if 'page' in params:
-        params.pop('page')
+    params.pop('page', None)
 
     return render(request, "stories/story_list.html", {
         "page_obj": page_obj,
@@ -66,6 +74,7 @@ def story_list(request):
         "author": author,
         "min_rating": min_rating,
         "sort": sort,
+        "bookmarked_story_ids": bookmarked_story_ids,
     })
 
 
@@ -76,6 +85,10 @@ def story_detail(request, story_id):
 
     root_chapters = story.chapters.filter(parent=None).order_by('created_on')
     branches = []
+
+    is_bookmarked = False
+    if request.user.is_authenticated:
+        is_bookmarked = story.bookmarked_by.filter(user=request.user).exists()
 
     for root in root_chapters:
         children = list(
@@ -112,6 +125,7 @@ def story_detail(request, story_id):
         'branches': branches,
         'original_chapter': original_chapter,
         'story_user_rating': story_user_rating,  
+        'is_bookmarked': is_bookmarked,
     })
 
 
@@ -196,8 +210,8 @@ def register_view(request):
 def profile_view(request):
     search_query = request.GET.get("search", "")
     sort_by = request.GET.get("sort", "created_on")
-
     stories = Story.objects.filter(author=request.user)
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('story')
 
     if search_query:
         stories = stories.filter(title__icontains=search_query)
@@ -216,7 +230,8 @@ def profile_view(request):
 
     return render(request, "stories/profile.html", {
         "user_stories": stories,
-        "profile_form": form
+        "profile_form": form,
+        "bookmarks": bookmarks,
     })
 
 # -----------------------------------------------
@@ -358,3 +373,22 @@ def rate_story(request):
 
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+# -----------------------------------------------
+
+@login_required
+@require_POST
+def bookmark_story(request, story_id):
+    story, created = Story.objects.get_or_create(id=story_id)
+    Bookmark.objects.get_or_create(user=request.user, story=story)
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"bookmarked": True, "story_id": story_id})
+    return redirect("story_detail", story_id=story_id)
+
+@login_required
+@require_POST
+def unbookmark_story(request, story_id):
+    Bookmark.objects.filter(user=request.user, story_id=story_id).delete()
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"bookmarked": False, "story_id": story_id})
+    return redirect("story_detail", story_id=story_id)

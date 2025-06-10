@@ -76,6 +76,26 @@
             </div>
             <div class="card-body d-flex flex-column">
                 <h4 class="card-title">{{ story.title }}</h4>
+
+
+
+                <!-- AJAX Bookmark Button -->
+                {% if user.is_authenticated %}
+                <button type="button" class="btn bookmark-btn mt-auto mb-2" data-story-id="{{ story.id }}"
+                    data-bookmark-url="{% url 'bookmark_story' story.id %}"
+                    data-unbookmark-url="{% url 'unbookmark_story' story.id %}"
+                    data-bookmarked="{% if story.id in bookmarked_story_ids %}true{% else %}false{% endif %}"
+                    title="{% if story.id in bookmarked_story_ids %}Remove Bookmark{% else %}Bookmark{% endif %}">
+                    <i
+                        class="bi {% if story.id in bookmarked_story_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+                </button>
+                {% endif %}
+
+
+
+
+
+
                 <p class="card-text text-muted">{{ story.description|truncatewords:25 }}</p>
                 <p class="text-muted mb-1"><strong>By:</strong> {{ story.author.username }}</p>
                 {% with story.avg_rating|default:0 as rating %}
@@ -90,6 +110,7 @@
                         ({{ rating|floatformat:"1" }}/5)
                 </div>
                 {% endwith %}
+
                 <a href="{% url 'story_detail' story.id %}" class="btn btn-outline-primary mt-auto">
                     Read More 👀
                 </a>

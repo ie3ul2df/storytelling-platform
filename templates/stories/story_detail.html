@@ -40,6 +40,25 @@
             <div class="mb-2">
                 <span class="text-muted">{{ story.description }}</span>
             </div>
+
+
+
+            <!-- AJAX Bookmark Button -->
+            {% if user.is_authenticated %}
+            <button type="button" class="btn bookmark-btn" data-story-id="{{ story.id }}"
+                data-bookmarked="{% if is_bookmarked %}true{% else %}false{% endif %}"
+                data-bookmark-url="{% url 'bookmark_story' story.id %}"
+                data-unbookmark-url="{% url 'unbookmark_story' story.id %}"
+                title="{% if is_bookmarked %}Remove Bookmark{% else %}Bookmark{% endif %}">
+                <i class="bi {% if is_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
+            </button>
+            {% endif %}
+
+
+
+
+
+
             <div>
                 {% if user.is_authenticated %}
                 <div class="rating-stars story-rating" data-story="{{ story.id }}"

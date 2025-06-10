@@ -149,3 +149,16 @@ class StoryRating(models.Model):
 
     class Meta:
         unique_together = ('story', 'user')
+
+#--------------------------------------------------
+        
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='bookmarked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'story')  # prevents duplicate bookmarks
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.story.title}"
