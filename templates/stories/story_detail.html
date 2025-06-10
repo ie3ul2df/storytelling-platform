@@ -101,6 +101,73 @@
                 {% endif %}
             </div>
         </div>
+
+
+
+
+
+
+
+        <hr>
+        <h5 class="text-muted">💬 Story Comments</h5>
+
+        {% for comment in comments %}
+        <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
+            <div class="d-flex justify-content-between">
+                <strong>{{ comment.user.username }}</strong>
+                <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+
+            <!-- Default display -->
+            <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+            <!-- Edit form (hidden initially) -->
+            <form method="POST" action="{% url 'edit_comment' comment.id %}" class="edit-form" style="display: none;"
+                id="edit-form-{{ comment.id }}">
+                {% csrf_token %}
+                <textarea name="content" class="form-control mb-2" rows="2">{{ comment.content }}</textarea>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-success">💾 Save</button>
+                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-id="{{ comment.id }}">❌
+                        Cancel</button>
+                </div>
+            </form>
+
+            {% if comment.user == user %}
+            <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️ Edit</button>
+
+                <form method="POST" action="{% url 'delete_comment' comment.id %}" class="delete-form"
+                    onsubmit="return confirm('Delete this comment?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-muted">No comments yet.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_story_comment' story.id %}">
+            {% csrf_token %}
+            <div class="mb-2">
+                <textarea name="content" rows="2" class="form-control"
+                    placeholder="Leave a comment on this story..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+        </form>
+        {% else %}
+        <p><a href="{% url 'login' %}">Login</a> to comment on this story.</p>
+        {% endif %}
+
+
+
+
+
+
+
     </div>
 
 
@@ -160,6 +227,81 @@
                         {% endif %}
 
                     </div>
+
+
+
+
+
+
+
+
+                    <hr>
+                    <div class="mt-4">
+                        <h5 class="text-muted">💬 Chapter Comments</h5>
+
+                        {% for comment in chapter.comments.all %}
+                        <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.user.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                            </div>
+
+                            <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+                            <form method="POST" action="{% url 'edit_comment' comment.id %}" class="edit-form"
+                                style="display: none;" id="edit-form-{{ comment.id }}">
+                                {% csrf_token %}
+                                <textarea name="content" class="form-control mb-2"
+                                    rows="2">{{ comment.content }}</textarea>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-sm btn-success">💾 Save</button>
+                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit"
+                                        data-id="{{ comment.id }}">❌ Cancel</button>
+                                </div>
+                            </form>
+
+                            {% if comment.user == user %}
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️
+                                    Edit</button>
+
+                                <form method="POST" action="{% url 'delete_comment' comment.id %}"
+                                    onsubmit="return confirm('Delete this comment?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small">No comments yet.</p>
+                        {% endfor %}
+
+                        {% if user.is_authenticated and chapter.id %}
+                        <form method="POST" action="{% url 'add_chapter_comment' chapter.id %}" class="mt-3">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <textarea name="content" rows="2" class="form-control"
+                                    placeholder="Add a comment..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                        </form>
+                        {% else %}
+                        <p class="text-muted small">Login to comment on this chapter.</p>
+                        {% endif %}
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
                 </div>
             </div>
             {% endfor %}
@@ -191,4 +333,5 @@
     {% endif %}
 
     <script src="{% static 'js/rating.js' %}"></script>
+    <script src="{% static 'js/comment.js' %}"></script>
     {% endblock %}

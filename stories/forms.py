@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Story, Chapter, Rating, UserProfile
+from .models import Story, Chapter, Rating, UserProfile, Comment
 
 # -----------------------------------------------------------
 
@@ -51,3 +51,12 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['profile_image', 'full_name', 'about', 'contact_email']
 
+# -----------------------------------------------------------
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Add a comment...'})
+        }

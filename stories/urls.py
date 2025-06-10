@@ -21,4 +21,9 @@ urlpatterns = [
     path('profile/<str:username>/toggle-follow/', views.toggle_follow, name='toggle_follow'),
     path("profile/", views.profile_view, name="profile"),
     path("profile/<str:username>/", views.public_profile_view, name="public_profile"),
+    path('stories/<int:story_id>/comment/', views.add_comment, name='add_story_comment'),
+    path("stories/<int:story_id>/comment/", views.add_comment, name="add_story_comment"),
+    path("chapters/<int:chapter_id>/comment/", views.add_comment, name="add_chapter_comment"),
+    path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
 ]

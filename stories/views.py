@@ -9,8 +9,8 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 import json
 from .forms import RegisterForm, RatingForm
-from .models import Story, Chapter, Rating, UserProfile, StoryRating, Bookmark
-from .forms import StoryForm, ChapterForm, UserProfileForm
+from .models import Story, Chapter, Rating, UserProfile, StoryRating, Bookmark, Comment
+from .forms import StoryForm, ChapterForm, UserProfileForm, CommentForm
 from . import models
 
 
@@ -83,7 +83,18 @@ def story_list(request):
 
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
-
+    comment_id = request.GET.get("read_comment")
+    if comment_id:
+        try:
+            comment = Comment.objects.get(id=comment_id)
+            if (comment.story and comment.story.author == request.user) or \
+               (comment.chapter and comment.chapter.story.author == request.user):
+                comment.is_read = True
+                comment.save()
+        except Comment.DoesNotExist:
+            pass
+    comment_form = CommentForm()
+    comments = story.comments.filter(parent=None)
     root_chapters = story.chapters.filter(parent=None).order_by('created_on')
     branches = []
 
@@ -135,6 +146,8 @@ def story_detail(request, story_id):
         'story_user_rating': story_user_rating,  
         'is_bookmarked': is_bookmarked,
         'is_following_author': is_following_author,
+        'comment_form': comment_form,
+        'comments': comments,
     })
 
 
@@ -220,6 +233,12 @@ def profile_view(request):
     user = request.user
     profile = user.userprofile
 
+    # ✅ Fetch unread comments on your stories or chapters
+    unread_comments = Comment.objects.filter(
+        Q(story__author=user) | Q(chapter__story__author=user),
+        is_read=False
+    )
+
     search_query = request.GET.get("search", "")
     sort_by = request.GET.get("sort", "created_on")
 
@@ -246,9 +265,13 @@ def profile_view(request):
         "following": profile.following.all(),
         "followers": profile.followers.all(),
         "sort": sort_by,
+        "unread_comments": unread_comments,
     }
 
     return render(request, "stories/profile.html", context)
+
+
+
 # -----------------------------------------------
 
 @login_required
@@ -455,3 +478,58 @@ def public_profile_view(request, username):
     }
 
     return render(request, "stories/public_profile.html", context)
+
+
+# -----------------------------------------------
+
+@login_required
+@require_POST
+def add_comment(request, story_id=None, chapter_id=None):
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.user = request.user
+
+        parent_id = request.POST.get('parent_id')
+        if parent_id:
+            comment.parent = Comment.objects.get(id=parent_id)
+
+        # SAFELY HANDLE STORY OR CHAPTER
+        if story_id:
+            try:
+                comment.story = Story.objects.get(id=story_id)
+            except Story.DoesNotExist:
+                return HttpResponseBadRequest("Story not found")
+        elif chapter_id:
+            try:
+                comment.chapter = Chapter.objects.get(id=chapter_id)
+            except Chapter.DoesNotExist:
+                return HttpResponseBadRequest("Chapter not found")
+        else:
+            return HttpResponseBadRequest("Missing story or chapter ID")
+
+        comment.save()
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseBadRequest("Invalid comment form")
+
+
+@login_required
+@require_POST
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    form = CommentForm(request.POST, instance=comment)
+    if form.is_valid():
+        form.save()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
+@login_required
+@require_POST
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    comment.delete()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
