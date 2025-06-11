@@ -91,25 +91,25 @@ These wireframes were designed in Balsamiq and illustrate the responsive layout 
 **🏠 Home Page**
 
 - Mobile:  
-  ![Home Mobile Wireframe](static/prototype/wireframes/Home-Mobile-Size.png)
+  ![Home Mobile Wireframe](static/prototypes/wireframes/Home-Mobile-Size.png)
 - Tablet:  
-  ![Home Tablet Wireframe](static/prototype/wireframes/Home-Tablet-Size.png)
+  ![Home Tablet Wireframe](static/prototypes/wireframes/Home-Tablet-Size.png)
 - Desktop:  
-  ![Home Desktop Wireframe](static/prototype/wireframes/Home-Wide-Screen.png)
+  ![Home Desktop Wireframe](static/prototypes/wireframes/Home-Wide-Screen.png)
 
 **👤 Profile Page**
 
 - Tablet & Mobile:  
-  ![Profile Tablet Wireframe](static/prototype/wireframes/Profile-Tablet-and-Mobile-Size.png)
+  ![Profile Tablet Wireframe](static/prototypes/wireframes/Profile-Tablet-and-Mobile-Size.png)
 - Desktop:  
-  ![Profile Desktop Wireframe](static/prototype/wireframes/Profile-Wide-Screen.png)
+  ![Profile Desktop Wireframe](static/prototypes/wireframes/Profile-Wide-Screen.png)
 
 **📖 Story Page**
 
 - Tablet & Mobile:  
-  ![Story Tablet Wireframe](static/prototype/wireframes/StoryPage-Tablet-and-Mobile-Size.png)
+  ![Story Tablet Wireframe](static/prototypes/wireframes/StoryPage-Tablet-and-Mobile-Size.png)
 - Desktop:  
-  ![Story Desktop Wireframe](static/prototype/wireframes/StoryPage-Wide-Screen.png)
+  ![Story Desktop Wireframe](static/prototypes/wireframes/StoryPage-Wide-Screen.png)
 
 ### Surface
 
@@ -128,22 +128,22 @@ These mockups reflect the final visual design and layout used in Storygram.
 **🏠 Home Page**
 
 - Mobile:  
-  ![Home Mobile Mockup](static/prototype/mockups/Home-Mobile-Size.JPG)
+  ![Home Mobile Mockup](static/prototypes/mockups/Home-Mobile-Size.JPG)
 - Tablet:  
-  ![Home Tablet Mockup](static/prototype/mockups/Home-Tablet-Size.JPG)
+  ![Home Tablet Mockup](static/prototypes/mockups/Home-Tablet-Size.JPG)
 - Desktop:  
-  ![Home Desktop Mockup](static/prototype/mockups/Home-Wide-Screen.JPG)
+  ![Home Desktop Mockup](static/prototypes/mockups/Home-Wide-Screen.JPG)
 
 **👤 Profile Page**
 
 - Tablet & Mobile:  
-  ![Profile Tablet Mockup](static/prototype/mockups/Profile-Tablet-and-Mobile-Size.jpg)
+  ![Profile Tablet Mockup](static/prototypes/mockups/Profile-Tablet-and-Mobile-Size.jpg)
 - Desktop:  
-  ![Profile Desktop Mockup](static/prototype/mockups/Profile-Wide-Screen.jpg)
+  ![Profile Desktop Mockup](static/prototypes/mockups/Profile-Wide-Screen.jpg)
 
 **📖 Story Page**
 
 - Tablet & Mobile:  
-  ![Story Tablet Mockup](static/prototype/mockups/StoryPage-Tablet-and-Mobile-Size.jpg)
+  ![Story Tablet Mockup](static/prototypes/mockups/StoryPage-Tablet-and-Mobile-Size.jpg)
 - Desktop:  
-  ![Story Desktop Mockup](static/prototype/mockups/StoryPage-Wide-Screen.jpg)
+  ![Story Desktop Mockup](static/prototypes/mockups/StoryPage-Wide-Screen.jpg)
