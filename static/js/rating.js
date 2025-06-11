@@ -66,7 +66,6 @@ function initChapterRatings() {
             }
           })
           .catch((err) => {
-            console.error("Rating failed:", err);
             alert("Rating failed.");
           });
       });
@@ -116,7 +115,6 @@ function initStoryRatings() {
             }
           })
           .catch((err) => {
-            console.error("Fetch error:", err);
             alert("Something went wrong. Please try again.");
           });
       });

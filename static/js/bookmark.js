@@ -1,5 +1,4 @@
 // ------------------ Logs script load and defines function to get CSRF token from cookies
-console.log("✅ bookmark.js loaded");
 
 function getCookie(name) {
   let cookieValue = null;
@@ -14,13 +13,10 @@ function getCookie(name) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".bookmark-btn");
-  console.log(`Found ${buttons.length} .bookmark-btn(s)`);
   buttons.forEach((btn) => {
-    console.log("Attaching click to story", btn.dataset.storyId);
     btn.addEventListener("click", () => {
       const isBookmarked = btn.dataset.bookmarked === "true";
       const url = isBookmarked ? btn.dataset.unbookmarkUrl : btn.dataset.bookmarkUrl;
-      console.log(`→ ${isBookmarked ? "Unbookmarking" : "Bookmarking"} via`, url);
 
       fetch(url, {
         method: "POST",
@@ -31,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((res) => {
           if (!res.ok) {
-            console.error("Network error:", res.status, res.statusText);
             return null;
           }
           return res.json();
