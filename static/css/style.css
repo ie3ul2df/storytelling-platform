@@ -152,3 +152,16 @@ textarea#id_about,
 input#id_contact_email {
   width: 100%;
 }
+
+/* --------------- Add New Story Page --------------- */
+
+#create-new-story-form > p:nth-child(2) > label,
+#create-new-story-form > p:nth-child(3) > label {
+  display: block;
+  font-weight: bold;
+}
+
+textarea#id_description,
+input#id_title {
+  width: 100%;
+}
