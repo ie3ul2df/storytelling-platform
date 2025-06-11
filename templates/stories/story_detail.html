@@ -22,7 +22,7 @@
 
         <!-- Info Side -->
         <div class="col-12 col-lg-8">
-            <h2 class="fw-bold mb-2 text-dark">{{ story.title }}</h2>
+            <h1 class="fw-bold mb-2 text-dark">{{ story.title }}</h1>
             <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
 
                 <div class="d-flex justify-content-start align-items-center gap-2">
@@ -45,7 +45,7 @@
                     </span>
                     {% endwith %}
                 </div>
-                <div class="d-flex justify-content-end align-items-center gap-2 my-2 my-lg-0">
+                <div class="d-flex justify-content-end align-items-center gap-2 my-2 my-lg-0 ">
 
                     <!--  Follow/Unfollow Button -->
                     {# Only show follow button if the viewer is authenticated and not the author #}
@@ -89,11 +89,11 @@
 
 
 
-            <div class="mb-2">
-                <span class="text-muted">{{ story.description }}</span>
+            <div class="mb-2 main-story-desc">
+                <span>{{ story.description }}</span>
             </div>
 
-
+            <hr>
             <div>
                 {% if user.is_authenticated %}
                 <div class="rating-stars story-rating" data-story="{{ story.id }}"
@@ -111,65 +111,71 @@
 
 
 
+        <div class="d-flex-justify-content-end text-end">
 
+            <button class="btn btn-sm btn-outline-secondary toggle-comments-btn mb-2 w-auto text-end border-0"
+                data-target="#story-comments">
+                💬 Read Comments ▼
+            </button>
 
-
-
-        <hr>
-        <h5 class="text-muted">💬 Story Comments</h5>
-
-        {% for comment in comments %}
-        <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
-            <div class="d-flex justify-content-between">
-                <strong>{{ comment.user.username }}</strong>
-                <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
-            </div>
-
-            <!-- Default display -->
-            <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
-
-            <!-- Edit form (hidden initially) -->
-            <form method="POST" action="{% url 'edit_comment' comment.id %}" class="edit-form d-none"
-                id="edit-form-{{ comment.id }}">
-                {% csrf_token %}
-                <textarea name="content" class="form-control mb-2" rows="2">{{ comment.content }}</textarea>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-sm btn-success">💾 Save</button>
-                    <button type="button" class="btn btn-sm btn-secondary cancel-edit" data-id="{{ comment.id }}">❌
-                        Cancel</button>
-                </div>
-            </form>
-
-            {% if comment.user == user %}
-            <div class="d-flex gap-2 mt-2">
-                <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️ Edit</button>
-
-                <form method="POST" action="{% url 'delete_comment' comment.id %}" class="delete-form"
-                    onsubmit="return confirm('Delete this comment?');">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                </form>
-            </div>
-            {% endif %}
         </div>
-        {% empty %}
-        <p class="text-muted">No comments yet.</p>
-        {% endfor %}
 
-        {% if user.is_authenticated %}
-        <form method="POST" action="{% url 'add_story_comment' story.id %}">
-            {% csrf_token %}
-            <div class="mb-2">
-                <textarea name="content" rows="2" class="form-control"
-                    placeholder="Leave a comment on this story..."></textarea>
+        <div id="story-comments" class="story-comment-container d-none">
+            <hr>
+            <h5 class="text-muted">💬 Story Comments</h5>
+
+            {% for comment in comments %}
+            <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ comment.user.username }}</strong>
+                    <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                </div>
+
+                <!-- Default display -->
+                <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+                <!-- Edit form (hidden initially) -->
+                <form method="POST" action="{% url 'edit_comment' comment.id %}" class="edit-form d-none"
+                    id="edit-form-{{ comment.id }}">
+                    {% csrf_token %}
+                    <textarea name="content" class="form-control mb-2" rows="2">{{ comment.content }}</textarea>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-success">💾</button>
+                        <button type="button" class="btn btn-sm btn-secondary cancel-edit"
+                            data-id="{{ comment.id }}">❌</button>
+                    </div>
+                </form>
+
+                {% if comment.user == user %}
+                <div class="d-flex gap-2 mt-2 edit-del-{{ comment.id }}">
+                    <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️</button>
+
+                    <form method="POST" action="{% url 'delete_comment' comment.id %}" class="delete-form"
+                        onsubmit="return confirm('Delete this comment?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
-            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-        </form>
-        {% else %}
-        <p><a href="{% url 'login' %}">Login</a> to comment on this story.</p>
-        {% endif %}
+            {% empty %}
+            <p class="text-muted">No comments yet.</p>
+            {% endfor %}
 
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'add_story_comment' story.id %}">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <textarea name="content" rows="2" class="form-control"
+                        placeholder="Leave a comment on this story..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-secondary">Submit</button>
+            </form>
+            {% else %}
+            <p><a href="{% url 'login' %}">Login</a> to comment on this story.</p>
+            {% endif %}
 
+        </div>
 
 
 
@@ -180,25 +186,26 @@
 
 
     <hr class="mb-4">
-    <h3>Story Flow</h3>
 
     {% for branch in branches %}
+    <p class="mt-4 h2">Season {{ forloop.counter }} </p>
     <div id="carousel-{{ branch.parent.id }}" class="carousel slide mb-4">
 
         {% include "stories/_carousel_controls.html" with parent=branch.parent sorted_chapters=branch.sorted_chapters %}
 
         <div class="carousel-inner">
             {% for chapter in branch.sorted_chapters %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="card {% if forloop.first %}border-primary shadow-sm{% endif %}">
+            <div class="carousel-item {% if forloop.first %}active first-slide{% endif %}">
+                <div class="card {% if forloop.first %} shadow-sm{% endif %}">
                     <div
                         class="card-header bg-light d-flex flex-column flex-sm-row justify-content-between align-items-center">
                         <span class="mb-2 mb-sm-0">
-                            <strong>Chapter {{ forloop.counter }}</strong> — {{ chapter.title }}
+                            <em>Written by: <span class="text-muted mb-0">{{chapter.author.username }}</span></em>
                             {% if chapter.id == branch.parent.id %}
                             <span class="badge bg-secondary ms-2">Original</span>
                             {% endif %}
                         </span>
+                        <h2 class="fw-bold">{{ chapter.title }}</h2>
                         <small class="avg ms-2 text-muted d-flex align-items-center gap-1">
                             <span class="avg-stars" data-average="{{ chapter.avg_rating }}"></span>
                             ({{ chapter.avg_rating|floatformat:1 }}/5) —
@@ -206,100 +213,113 @@
                         </small>
                     </div>
                     <div class="card-body">
-                        {% if user.is_authenticated %}
-                        <div class="rating-stars chapter-rating" data-chapter="{{ chapter.id }}"
-                            data-user-rating="{{ chapter.user_rating.value|default:'0' }}">
-                            <strong>Rank this chapter:</strong>
-                            <span class="stars">
-                                {% for i in "12345"|make_list %}
-                                <i class="star" data-value="{{ forloop.counter }}">&#9733;</i>
-                                {% endfor %}
-                            </span>
+                        <div class="mb-2 user-chapter-desc">
+                            <span>{{ chapter.content|linebreaks }}</span>
                         </div>
-                        {% endif %}
 
+                        <hr class="mt-2">
 
-                        {{ chapter.content|linebreaks }}
-                        <p class="text-muted mb-0"><em>By {{ chapter.author.username }}</em></p>
-
-                        {% if user == chapter.author %}
-                        <div class="mt-3 d-flex justify-content-end gap-2">
-                            <a href="{% url 'chapter_edit' chapter.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
-                            <a href="{% url 'chapter_delete' chapter.id %}" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Are you sure you want to delete this chapter?');">
-                                🗑️ Delete
-                            </a>
-
-                        </div>
-                        {% endif %}
-
-                    </div>
-
-
-
-
-
-
-
-
-                    <hr>
-                    <div class="mt-4">
-                        <h5 class="text-muted">💬 Chapter Comments</h5>
-
-                        {% for comment in chapter.comments.all %}
-                        <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
-                            <div class="d-flex justify-content-between">
-                                <strong>{{ comment.user.username }}</strong>
-                                <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
-                            </div>
-
-                            <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
-
-                            <form method="POST" action="{% url 'edit_comment' comment.id %}" class="edit-form d-none"
-                                id="edit-form-{{ comment.id }}">
-                                {% csrf_token %}
-                                <textarea name="content" class="form-control mb-2"
-                                    rows="2">{{ comment.content }}</textarea>
-                                <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-sm btn-success">💾 Save</button>
-                                    <button type="button" class="btn btn-sm btn-secondary cancel-edit"
-                                        data-id="{{ comment.id }}">❌ Cancel</button>
+                        <div class="mt-3 d-flex justify-content-between gap-2">
+                            <div>
+                                {% if user.is_authenticated %}
+                                <div class="rating-stars chapter-rating" data-chapter="{{ chapter.id }}"
+                                    data-user-rating="{{ chapter.user_rating.value|default:'0' }}">
+                                    <strong>Rank this chapter:</strong>
+                                    <span class="stars">
+                                        {% for i in "12345"|make_list %}
+                                        <i class="star" data-value="{{ forloop.counter }}">&#9733;</i>
+                                        {% endfor %}
+                                    </span>
                                 </div>
-                            </form>
-
-                            {% if comment.user == user %}
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️
-                                    Edit</button>
-
-                                <form method="POST" action="{% url 'delete_comment' comment.id %}"
-                                    onsubmit="return confirm('Delete this comment?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
-                                </form>
+                                {% endif %}
+                            </div>
+                            {% if user == chapter.author %}
+                            <div>
+                                <a href="{% url 'chapter_edit' chapter.id %}" class="btn btn-sm btn-warning">✏️</a>
+                                <a href="{% url 'chapter_delete' chapter.id %}" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this chapter?');">
+                                    🗑️
+                                </a>
                             </div>
                             {% endif %}
                         </div>
-                        {% empty %}
-                        <p class="text-muted small">No comments yet.</p>
-                        {% endfor %}
 
-                        {% if user.is_authenticated and chapter.id %}
-                        <form method="POST" action="{% url 'add_chapter_comment' chapter.id %}" class="mt-3">
-                            {% csrf_token %}
-                            <div class="mb-2">
-                                <textarea name="content" rows="2" class="form-control"
-                                    placeholder="Add a comment..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                        </form>
-                        {% else %}
-                        <p class="text-muted small">Login to comment on this chapter.</p>
-                        {% endif %}
+
+                    </div>
+
+
+                    <div class="d-flex-justify-content-end text-end">
+
+                        <button
+                            class="btn btn-sm btn-outline-secondary toggle-comments-btn mb-2 w-auto text-end border-0"
+                            data-target="#chapter-comments-{{ chapter.id }}">
+                            💬 Read Comments ▼
+                        </button>
+
                     </div>
 
 
 
+                    <div id="chapter-comments-{{ chapter.id }}" class="p-2 chapter-comment-container d-none">
+
+                        <hr>
+                        <div class="mt-4">
+                            <h5 class="text-muted">💬 Chapter Comments</h5>
+
+                            {% for comment in chapter.comments.all %}
+                            <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ comment.user.username }}</strong>
+                                    <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                                </div>
+
+                                <p class="mb-1" id="comment-text-{{ comment.id }}">{{ comment.content }}</p>
+
+                                <form method="POST" action="{% url 'edit_comment' comment.id %}"
+                                    class="edit-form d-none" id="edit-form-{{ comment.id }}">
+                                    {% csrf_token %}
+                                    <textarea name="content" class="form-control mb-2"
+                                        rows="2">{{ comment.content }}</textarea>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-sm btn-success">💾</button>
+                                        <button type="button" class="btn btn-sm btn-secondary cancel-edit"
+                                            data-id="{{ comment.id }}">❌</button>
+                                    </div>
+                                </form>
+
+                                {% if comment.user == user %}
+                                <div class="d-flex gap-2 mt-2">
+                                    <button class="btn btn-sm btn-warning edit-btn"
+                                        data-id="{{ comment.id }}">✏️</button>
+
+                                    <form method="POST" action="{% url 'delete_comment' comment.id %}"
+                                        onsubmit="return confirm('Delete this comment?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <p class="text-muted small">No comments yet.</p>
+                            {% endfor %}
+
+                            {% if user.is_authenticated and chapter.id %}
+                            <form method="POST" action="{% url 'add_chapter_comment' chapter.id %}" class="mt-3">
+                                {% csrf_token %}
+                                <div class="mb-2">
+                                    <textarea name="content" rows="2" class="form-control"
+                                        placeholder="Add a comment..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-secondary">Submit</button>
+                            </form>
+                            {% else %}
+                            <p class="text-muted small">Login to comment on this chapter.</p>
+                            {% endif %}
+                        </div>
+
+
+                    </div>
 
 
 
@@ -317,8 +337,8 @@
         {% if user.is_authenticated %}
         {% with branch.sorted_chapters|first as season_root %}
         <div class="text-end mt-2">
-            <a href="{% url 'chapter_create' story.id %}?parent={{ season_root.id }}" class="btn btn-outline-secondary">
-                ➕ Create Your Chapter
+            <a href="{% url 'chapter_create' story.id %}?parent={{ season_root.id }}" class="btn btn-light">
+                ✎𓂃 Write Your Chapter
             </a>
         </div>
         {% endwith %}
@@ -330,9 +350,9 @@
     {% if story.allow_contributions or story.author.id == user.id %}
     {% with branches|last as last_branch %}
     {% with last_branch.sorted_chapters|last as last_chapter %}
-    <div class="text-end mt-4">
-        <a href="{% url 'season_create' story.id %}" class="btn btn-outline-primary">
-            ➕ Add New Season
+    <div class="text-end my-4">
+        <a href="{% url 'season_create' story.id %}" class="btn btn-light">
+            ✍🏻 Add New Season
         </a>
     </div>
     {% endwith %}

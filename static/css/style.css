@@ -2,6 +2,7 @@
 body {
   background: #bfbfbf;
   font-family: Arial, sans-serif;
+  background-image: url(https://img.freepik.com/premium-photo/brown-craft-paper-texture_87555-17746.jpg);
 }
 
 a {
@@ -96,4 +97,16 @@ a {
 .story-bookmark-btn:hover {
   background-color: #fff;
   scale: 1.1;
+}
+
+.mb-2.main-story-desc,
+.carousel-item.first-slide > .card > .card-body > .user-chapter-desc {
+  background-image: url(https://media.istockphoto.com/id/2165283341/vector/vector-background-with-abstract-school-texture-groovy-wavy-seamless-pattern-of-checkered.jpg?s=612x612&w=0&k=20&c=LBOLSuPbrdEBt0oD4t5jMnnqN6dcp-w8SjOTdJmaQcQ=);
+  background-size: contain;
+  background-position: center center;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-family: cursive;
+  font-weight: bold;
 }
