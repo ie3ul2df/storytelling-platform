@@ -17,7 +17,6 @@ urlpatterns = [
     path('story/<int:story_id>/delete/', views.story_delete, name='story_delete'),
     path('ajax/rate/', views.ajax_rate_chapter, name='ajax_rate_chapter'),
     path("rate-story/", views.rate_story, name="rate_story"),
-    path('test/', views.test_template, name='test_template'),
     path('stories/<int:story_id>/bookmark/', views.bookmark_story, name='bookmark_story'),
     path('stories/<int:story_id>/unbookmark/', views.unbookmark_story, name='unbookmark_story'),
     path('profile/<str:username>/toggle-follow/', views.toggle_follow, name='toggle_follow'),
