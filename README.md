@@ -1,173 +1,149 @@
-# Storytelling Platform
+# Storygram
 
-A Django-based collaborative storytelling web application that allows users to create, share, and contribute to narrative stories chapter by chapter. Built with HTML, CSS, JavaScript, and Python, the platform supports user authentication, CRUD operations, contribution control, chapter ratings, and responsive design.
+A Django-based storytelling platform where users collaboratively create, manage, and rate community-driven stories. Storygram empowers writers to contribute individual chapters, explore creative story branches, and engage with others through a shared narrative experience.
 
----
+## 🎯 Project Purpose & Rationale
+
+**Storygram** is designed for writers, readers, and storytelling enthusiasts who want to collaboratively build narratives in a flexible, branching format. It is ideal for users who enjoy sharing creative writing, exploring alternate story paths, and rating each other's contributions.
+
+This application was built as part of the Level 5 Diploma in Web Application Development to demonstrate full-stack development skills using Django. The project aligns with real-world practices such as user authentication, CRUD operations, relational database modeling, and deployment to a cloud platform (Heroku).
+
+Storygram solves the problem of fragmented creative collaboration by offering a centralised platform where users can:
+
+- Create and contribute to shared stories, one chapter at a time.
+- View and rate different versions of chapters created by other contributors.
+- Organise stories into coherent branches while encouraging community participation.
+
+The project demonstrates key backend development skills expected by assessors and employers, including:
+
+- A responsive and accessible UX.
+- Secure data management.
+- Clean, PEP8-compliant Python code.
+- Clear documentation and version control practices.
 
 ## 🧠 UX & UI Design
 
-### Project Goals
+### Strategy
 
-- Enable users to write and share their own stories.
-- Allow users to continue stories with new chapters.
-- Enable community-based ranking to guide the story direction.
-- Provide visibility and collaboration controls to the story owners.
+The primary goal of Storygram is to create a platform for collaborative storytelling.
 
-### User Stories
+**User Goals:**
 
-#### Must Have
+- Allow users to write and share original stories.
+- Enable collaboration by allowing contributions from other users.
+- Provide chapter ranking to guide narrative progression.
+- Offer visibility and control over each story's audience and contributors.
 
-- As a **visitor**, I want to **register and log in** so I can **write and interact with stories**.
-- As a **registered user**, I want to **create a new story** so I can **share my writing**.
-- As a **user**, I want to **write multiple chapters** so I can **continue the narrative over time**.
-- As a **user**, I want to **rank each chapter** so I can **express how much I liked it**.
-- As a **story owner**, I want to **set my story as public or private** so I can **control who sees it**.
-- As a **visitor or user**, I want to **see a homepage with top-ranked stories** so I can **discover engaging content**.
-- As a **user**, I want to **edit or delete my stories and chapters** so I can **maintain and update my content**.
-- As a **user**, I want to **log out securely** to **protect my account and privacy**.
-- As a **user**, I want to **view and read full stories and their chapters** so I can **enjoy complete narratives**.
+**Business/Educational Goals:**
 
-#### Should Have
+- Demonstrate full-stack web development skills.
+- Apply UX principles for real-world, user-centred design.
+- Showcase coding proficiency and project planning for assessment and potential employers.
 
-- As a **story creator**, I want to **allow or disallow contributions** so I can **retain creative control**.
-- As a **logged-in user**, I want to **write a new chapter for someone else's story** so I can **collaborate on ongoing stories**.
-- As a **contributor**, I want to **receive rankings for each chapter** so I can **gain feedback and recognition**.
-- As the **system**, I want to **automatically choose the highest-ranked chapter** as the **official next chapter**.
-- As a **user**, I want to **enable or disable contributions** before publishing my story so I can **decide on collaboration**.
+### Scope
 
-#### Could Have
+The project includes the following core features:
 
-- As a **user**, I want to **comment on stories** so I can **give feedback or ask questions**.
-- As a **user**, I want to **follow my favourite authors or stories** so I can **stay updated on new chapters**.
-- As a **user**, I want to **get notified when someone contributes or ranks my story** so I can **track engagement**.
-- As a **visitor**, I want to **search or filter stories by category, tag, or author** so I can **find stories that interest me**.
+- User authentication (register, login, logout).
+- Story creation with title, image, description, and collaboration settings.
+- Chapter creation and rating system (1–5 stars).
+- Visibility settings for stories (public/private).
+- Editable/deletable content for authors.
+- Filtering and sorting stories on the homepage.
 
-### Wireframes
+Planned or future features:
 
-Wireframes were created using Balsamiq to plan the layout for:
+- Comment system.
+- Follow/favourite authors and stories.
+- Notification system for new contributions and ratings.
+
+### Structure
+
+The platform follows a simple, intuitive structure:
+
+- Homepage: Shows top-ranked stories with filtering and search tools.
+- Story Detail Page: Displays the story summary and list of chapters.
+- Chapter Page: Displays chapter content and rating functionality.
+- Profile Page: Allows users to edit profile and view their stories/chapters.
+- Admin Panel: For site administrators to manage users and content.
+
+Each story can have multiple chapters submitted by different users, and the best-rated version is promoted as the official continuation.
+
+### Skeleton
+
+Wireframes were created using Balsamiq to plan the responsive layout for:
 
 - Mobile
 - Tablet
 - Desktop
 
-[Insert wireframe images or links here]
+Each view includes:
 
----
+- Navigation bar
+- Homepage story grid layout
+- Story detail and chapter forms
+- Rating and contribution interactions
 
-## 🔧 Features
+**WIREFRAMES**
 
-- User registration and login
-- Story creation with privacy and collaboration settings
-- Chapter writing and ranking
-- Auto-selection of best-rated chapters
-- Responsive layout for mobile/tablet/desktop
-- Admin panel for managing content
+These wireframes were designed in Balsamiq and illustrate the responsive layout planned for Storygram across mobile, tablet, and desktop devices.
 
----
+**🏠 Home Page**
 
-## 🗃️ Data Models
+- Mobile:  
+  ![Home Mobile Wireframe](static/prototype/wireframes/Home-Mobile-Size.png)
+- Tablet:  
+  ![Home Tablet Wireframe](static/prototype/wireframes/Home-Tablet-Size.png)
+- Desktop:  
+  ![Home Desktop Wireframe](static/prototype/wireframes/Home-Wide-Screen.png)
 
-- `User`: Django’s built-in User model
-- `Story`: title, description, author, is_public, allow_contributions
-- `Chapter`: title, content, story FK, author
-- `Rating`: chapter FK, user FK, rating (1–5), unique per user per chapter
+**👤 Profile Page**
 
-Refer to `erd.png` for the full entity-relationship diagram.
+- Tablet & Mobile:  
+  ![Profile Tablet Wireframe](static/prototype/wireframes/Profile-Tablet-and-Mobile-Size.png)
+- Desktop:  
+  ![Profile Desktop Wireframe](static/prototype/wireframes/Profile-Wide-Screen.png)
 
----
+**📖 Story Page**
 
-## 🛠️ Technologies Used
+- Tablet & Mobile:  
+  ![Story Tablet Wireframe](static/prototype/wireframes/StoryPage-Tablet-and-Mobile-Size.png)
+- Desktop:  
+  ![Story Desktop Wireframe](static/prototype/wireframes/StoryPage-Wide-Screen.png)
 
-- **Python 3 / Django 4**
-- **HTML5, CSS3, Bootstrap**
-- **JavaScript**
-- **PostgreSQL** (Heroku)
-- **Crispy Forms**
-- **Gunicorn + dj_database_url for deployment**
+### Surface
 
----
+**Design Choices:**
 
-## 🚀 Deployment
+- **Framework:** Bootstrap 5.3 for consistent layout and responsive design.
+- **Typography:** Sans-serif fonts (Bootstrap default) for readability.
+- **Colour Scheme:** Dark navbar, white background, and primary action buttons in green/blue for clarity.
+- **Icons:** Bootstrap Icons for bookmarks, ratings, and UI feedback.
+- **Accessibility:** Used semantic HTML, colour contrast, alt text for images, and responsive layouts for mobile users.
 
-This app is deployed to [Heroku](https://www.heroku.com/).
+**MOCKUPS**
 
-### Local Setup
+These mockups reflect the final visual design and layout used in Storygram.
 
-1. Clone the repo:
+**🏠 Home Page**
 
-   ```bash
-   git clone https://github.com/yourusername/storytelling-platform.git
-   cd storytelling-platform
-   ```
+- Mobile:  
+  ![Home Mobile Mockup](static/prototype/mockups/Home-Mobile-Size.JPG)
+- Tablet:  
+  ![Home Tablet Mockup](static/prototype/mockups/Home-Tablet-Size.JPG)
+- Desktop:  
+  ![Home Desktop Mockup](static/prototype/mockups/Home-Wide-Screen.JPG)
 
-2. Create and activate a virtual environment:
+**👤 Profile Page**
 
-   ```bash
-   python3 -m venv env
-   source env/bin/activate
-   ```
+- Tablet & Mobile:  
+  ![Profile Tablet Mockup](static/prototype/mockups/Profile-Tablet-and-Mobile-Size.jpg)
+- Desktop:  
+  ![Profile Desktop Mockup](static/prototype/mockups/Profile-Wide-Screen.jpg)
 
-3. Install dependencies:
+**📖 Story Page**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Add `.env` with your environment variables (keep this file out of Git):
-
-   ```env
-   SECRET_KEY=your-secret-key
-   DEBUG=True
-   DATABASE_URL=your-local-db
-   ```
-
-5. Run migrations and start the server:
-   ```bash
-   python manage.py migrate
-   python manage.py runserver
-   ```
-
-### Heroku Deployment Steps
-
-1. Push to GitHub
-2. Connect Heroku app
-3. Set config vars (SECRET_KEY, DEBUG=False, ALLOWED_HOSTS, DATABASE_URL)
-4. Run:
-   ```bash
-   heroku run python manage.py migrate
-   heroku run python manage.py createsuperuser
-   ```
-
----
-
-## 🧪 Testing
-
-- Manual testing across:
-  - Chrome, Firefox, Safari
-  - Mobile, Tablet, Desktop views
-- Online validators used:
-  - [W3C HTML Validator](https://validator.w3.org/)
-  - [W3C CSS Validator](https://jigsaw.w3.org/css-validator/)
-  - [PEP8 checker](http://pep8online.com/)
-- Lighthouse performance and accessibility reports documented below:
-
-[Insert screenshots or descriptions]
-
-### Bug Fixes
-
-- Bug: Ratings were duplicated by same user.
-  - Fix: Added `unique_together` constraint in `Rating` model.
-
----
-
-## 📝 Credits
-
-- Story concept inspired by collaborative fiction platforms
-- Bootstrap and Crispy Forms from official docs
-- [Images/icons/wireframes] from [source with URL]
-
----
-
-## 📄 License
-
-This project is for educational purposes as part of a Level 5 Diploma in Web Application Development.
+- Tablet & Mobile:  
+  ![Story Tablet Mockup](static/prototype/mockups/StoryPage-Tablet-and-Mobile-Size.jpg)
+- Desktop:  
+  ![Story Desktop Mockup](static/prototype/mockups/StoryPage-Wide-Screen.jpg)
