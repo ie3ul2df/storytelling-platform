@@ -23,16 +23,47 @@ The project demonstrates key backend development skills expected by assessors an
 
 ## 🧠 UX & UI Design
 
-### Strategy
+### 1. Strategy
 
-The primary goal of Storygram is to create a platform for collaborative storytelling.
+#### 🎯 User Goals
 
-**User Goals:**
+The primary user goals for _Storygram_ are to:
 
-- Allow users to write and share original stories.
-- Enable collaboration by allowing contributions from other users.
-- Provide chapter ranking to guide narrative progression.
-- Offer visibility and control over each story's audience and contributors.
+- Empower users to write and share original stories chapter by chapter.
+- Encourage collaboration by enabling other users to contribute to ongoing stories.
+- Guide narrative direction through community-based chapter ranking.
+- Provide control to story owners over visibility (public/private) and contribution permissions.
+- Support intuitive navigation and access to engaging, top-rated stories.
+- Offer profile management and secure session handling for all users.
+
+#### ✅ User Stories
+
+##### Must Have
+
+- As a **visitor**, I want to **register and log in** so I can **write and interact with stories**.
+- As a **registered user**, I want to **create a new story** so I can **share my writing**.
+- As a **user**, I want to **write multiple chapters** so I can **continue the narrative over time**.
+- As a **user**, I want to **rank each chapter** so I can **express how much I liked it**.
+- As a **story owner**, I want to **set my story as public or private** so I can **control who sees it**.
+- As a **visitor or user**, I want to **see a homepage with top-ranked stories** so I can **discover engaging content**.
+- As a **user**, I want to **edit or delete my stories and chapters** so I can **maintain and update my content**.
+- As a **user**, I want to **log out securely** to **protect my account and privacy**.
+- As a **user**, I want to **view and read full stories and their chapters** so I can **enjoy complete narratives**.
+
+##### Should Have
+
+- As a **story creator**, I want to **allow or disallow contributions** so I can **retain creative control**.
+- As a **logged-in user**, I want to **write a new chapter for someone else's story** so I can **collaborate on ongoing stories**.
+- As a **contributor**, I want to **receive rankings for each chapter** so I can **gain feedback and recognition**.
+- As the **system**, I want to **automatically choose the highest-ranked chapter** as the **official next chapter**.
+- As a **user**, I want to **enable or disable contributions** before publishing my story so I can **decide on collaboration**.
+
+##### Could Have
+
+- As a **user**, I want to **comment on stories** so I can **give feedback or ask questions**.
+- As a **user**, I want to **follow my favourite authors or stories** so I can **stay updated on new chapters**.
+- As a **user**, I want to **get notified when someone contributes or ranks my story** so I can **track engagement**.
+- As a **visitor**, I want to **search or filter stories by category, tag, or author** so I can **find stories that interest me**.
 
 **Business/Educational Goals:**
 
