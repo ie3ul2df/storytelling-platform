@@ -1,3 +1,5 @@
+// ------------------ Get cookie value by name
+
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== "") {
@@ -13,6 +15,8 @@ function getCookie(name) {
   return cookieValue;
 }
 
+// ------------------ Highlight stars up to given value
+
 function renderStars(stars, value) {
   stars.forEach((s, i) => {
     s.classList.toggle("rated", i < value);
@@ -20,6 +24,7 @@ function renderStars(stars, value) {
   });
 }
 
+// ------------------ Handle star rating UI and send rating via AJAX
 // --- CHAPTER RATING ---
 function initChapterRatings() {
   document.querySelectorAll(".rating-stars.chapter-rating").forEach((container) => {

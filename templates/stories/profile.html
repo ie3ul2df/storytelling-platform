@@ -4,7 +4,7 @@
 <div class="container py-4 bg-light">
     <div class="row ">
 
-        <!-- ------------User profile and user Image ------------ -->
+        <!-- ------------------ User profile section with welcome message, image, and edit form -->
 
         <div class="col-md-6 p-5 pb-0">
             <div class="text-center mb-4">
@@ -21,7 +21,7 @@
             </form>
         </div>
 
-        <!-- ------------ Bookmarks, Networks ------------ -->
+        <!-- ------------------ Bookmarked stories and user's social network (following/followers) -->
 
         <div class="col-md-6 p-5">
             <div class="user-bookmarks">
@@ -64,7 +64,7 @@
 
             </div>
 
-            <!-- ------------ Notifications ------------ -->
+            <!-- ------------------ Unread comment notifications for user's stories/chapters -->
 
             <h5>🔔 Unread Comments ({{ unread_comments.count }})</h5>
 
@@ -129,7 +129,8 @@
             </div>
         </form>
 
-        <!-- ------------ user stories list ------------ -->
+        <!-- ------------------ Section for listing user's own stories -->
+        <!-- ------------------ Story card details: image, title, description, visibility, actions -->
 
         {% if user_stories %}
         <div class="row">

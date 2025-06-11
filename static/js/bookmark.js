@@ -1,4 +1,4 @@
-// static/js/bookmark.js
+// ------------------ Logs script load and defines function to get CSRF token from cookies
 console.log("✅ bookmark.js loaded");
 
 function getCookie(name) {
@@ -9,6 +9,8 @@ function getCookie(name) {
   });
   return cookieValue;
 }
+
+// ------------------ Handles bookmark button clicks using AJAX and updates icon/title based on response
 
 document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".bookmark-btn");

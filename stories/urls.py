@@ -3,6 +3,8 @@
 from django.urls import path
 from . import views
 
+# ------------------ URL routes for stories, chapters, ratings, bookmarks, profiles, and comments
+
 urlpatterns = [
     path('', views.story_list, name='story_list'),
     path('story/<int:story_id>/', views.story_detail, name='story_detail'),

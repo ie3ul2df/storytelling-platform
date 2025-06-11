@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .models import Story, Chapter, Rating, UserProfile, Comment
 
 # -----------------------------------------------------------
+# ------------------ Form for creating/editing Story model
 
 class StoryForm(forms.ModelForm):
     class Meta:
@@ -15,6 +16,7 @@ class StoryForm(forms.ModelForm):
         }
 
 # -----------------------------------------------------------
+# ------------------ Form for creating/editing Chapter model
 
 class ChapterForm(forms.ModelForm):
     class Meta:
@@ -25,6 +27,7 @@ class ChapterForm(forms.ModelForm):
         }
 
 # -----------------------------------------------------------
+# ------------------ User registration form
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -32,6 +35,7 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'password1', 'password2']
 
 # -----------------------------------------------------------
+# ------------------ Form for rating a chapter (1–5 stars)
 
 class RatingForm(forms.ModelForm):
     value = forms.ChoiceField(
@@ -45,6 +49,7 @@ class RatingForm(forms.ModelForm):
         fields = ['value']
 
 # -----------------------------------------------------------
+# ------------------ Form for editing user profile info
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -52,6 +57,7 @@ class UserProfileForm(forms.ModelForm):
         fields = ['profile_image', 'full_name', 'about', 'contact_email']
 
 # -----------------------------------------------------------
+# ------------------ Form for adding a comment
 
 class CommentForm(forms.ModelForm):
     class Meta:

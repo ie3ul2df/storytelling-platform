@@ -1,3 +1,5 @@
+// ------------------ Shows comment edit form and hides original text when edit button is clicked
+
 document.querySelectorAll(".edit-btn").forEach((button) => {
   button.addEventListener("click", () => {
     const id = button.dataset.id;
@@ -6,6 +8,8 @@ document.querySelectorAll(".edit-btn").forEach((button) => {
   });
 });
 
+// ------------------ Cancel edit: show text, hide form
+
 document.querySelectorAll(".cancel-edit").forEach((button) => {
   button.addEventListener("click", () => {
     const id = button.dataset.id;
@@ -13,6 +17,8 @@ document.querySelectorAll(".cancel-edit").forEach((button) => {
     document.getElementById(`edit-form-${id}`).classList.add("d-none");
   });
 });
+
+// ------------------ Toggle comment section visibility and button text
 
 document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".toggle-comments-btn").forEach((button) => {
@@ -28,6 +34,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// ------------------ Toggle comment edit form and buttons on edit/cancel
 
 document.addEventListener("DOMContentLoaded", function () {
   // Handle edit button click
@@ -51,4 +59,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (buttons) buttons.classList.remove("d-none");
     });
   });
+});
+
+// ------------------ Initialize all Bootstrap carousels on the page
+
+document.querySelectorAll(".carousel").forEach((el) => {
+  new bootstrap.Carousel(el);
 });

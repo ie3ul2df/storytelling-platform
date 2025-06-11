@@ -4,6 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from stories.views import register_view
 
+# ------------------ Project URL config: admin, auth, and story app routes
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/register/', register_view, name='register'),

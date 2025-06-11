@@ -4,7 +4,8 @@
 {% block content %}
 <h1 class="mb-4">Story Home</h1>
 
-<!-- Filter & Sort Form -->
+<!-- ------------------ Filter and sort form for searching stories -->
+
 <form method="get" class="row g-2 align-items-end mb-4">
     <div class="col-12 col-md-3">
         <label class="form-label" for="q">Search</label>
@@ -30,7 +31,6 @@
             {% endif %}
             {% endfor %}
         </select>
-
     </div>
 
     <div class="col-12 col-md-3">
@@ -54,11 +54,12 @@
         </select>
     </div>
 
-
     <div class="col-12 col-md-2">
         <button type="submit" class="btn btn-primary w-100">Apply</button>
     </div>
 </form>
+
+<!-- ------------------ Story card list loop with image, rating, and description -->
 
 <div class="row">
     {% for story in page_obj %}
@@ -78,8 +79,7 @@
             </a>
             <div class="card-body d-flex flex-column pt-0">
 
-
-
+                <!-- ------------------ AJAX bookmark button inside story card -->
 
                 <!-- AJAX Bookmark Button -->
                 {% if user.is_authenticated %}
@@ -93,13 +93,11 @@
                 </button>
                 {% endif %}
 
-
-
-
-
-
                 <p class="card-text text-muted">{{ story.description|truncatewords:25 }}</p>
                 <p class="text-muted mb-1"><strong>By:</strong> {{ story.author.username }}</p>
+
+                <!-- ------------------ Star rating display inside story card -->
+
                 {% with story.avg_rating|default:0 as rating %}
                 <div class="text-muted small mb-2">
                     🏆
@@ -126,7 +124,8 @@
     {% endfor %}
 </div>
 
-<!-- Pagination Controls -->
+<!-- ------------------ Pagination controls for story list -->
+
 {% if page_obj.has_other_pages %}
 <nav aria-label="Stories pagination">
     <ul class="pagination justify-content-center">

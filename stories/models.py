@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 #--------------------------------------------------
+# ------------------ Story model with title, author, image, and rating helpers
 
 class Story(models.Model):
     title                = models.CharField(max_length=200)
@@ -78,6 +79,7 @@ class Story(models.Model):
 
 
 #--------------------------------------------------
+# ------------------ Chapter model with parent-child structure and average rating
 
 class Chapter(models.Model):
     story       = models.ForeignKey(Story, on_delete=models.CASCADE,
@@ -104,6 +106,7 @@ class Chapter(models.Model):
 
 
 #--------------------------------------------------
+# ------------------ Chapter rating model (1–5 stars), one per user
 
 class Rating(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='ratings')
@@ -117,12 +120,14 @@ class Rating(models.Model):
         return f"{self.chapter} rated {self.value} by {self.user.username}"
 
 #--------------------------------------------------
-    
+# ------------------ Returns average rating or 0 if none
+
 @property
 def average_rating(self):
     return self.ratings.aggregate(Avg('value'))['value__avg'] or 0
 
 #--------------------------------------------------
+# ------------------ User profile with image, bio, follow system, and auto-creation
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -162,7 +167,8 @@ class UserProfile(models.Model):
             return "https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-profile-image_oe2lqb.jpg"
         return self.profile_image.url
 
-    
+#--------------------------------------------------
+# ------------------ Auto-create or update UserProfile on User save
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
@@ -172,7 +178,8 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 
 #--------------------------------------------------
-    
+# ------------------ Model for user rating a story (1 per user)
+
 class StoryRating(models.Model):
     story = models.ForeignKey("Story", related_name="ratings", on_delete=models.CASCADE)
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
@@ -182,7 +189,8 @@ class StoryRating(models.Model):
         unique_together = ('story', 'user')
 
 #--------------------------------------------------
-        
+# ------------------ Model for user bookmarking a story (unique per user/story)
+
 class Bookmark(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='bookmarked_by')
@@ -195,6 +203,7 @@ class Bookmark(models.Model):
         return f"{self.user.username} bookmarked {self.story.title}"
     
 #--------------------------------------------------
+# ------------------ Model for story/chapter comments with reply and read tracking
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -16,11 +16,7 @@ from . import models
 
 
 # -----------------------------------------------
-
-def test_template(request):
-    return render(request, 'test.html')
-
-# -----------------------------------------------
+# ------------------ View to list stories with filters, sorting, pagination, and bookmark status
 
 def story_list(request):
     query      = request.GET.get('q', '').strip()
@@ -81,6 +77,7 @@ def story_list(request):
 
 
 # -----------------------------------------------
+# ------------------ View to show story details, chapters, ratings, comments, and user interactions
 
 def story_detail(request, story_id):
     story = get_object_or_404(Story, id=story_id, is_public=True)
@@ -164,7 +161,7 @@ def story_detail(request, story_id):
 
 
 # -----------------------------------------------
-
+# ------------------ View to create a new story (login required)
 
 @login_required
 def story_create(request):
@@ -182,7 +179,7 @@ def story_create(request):
 
 
 # -----------------------------------------------
-
+# ------------------ View to create a chapter (optionally as a child), login required
 
 @login_required
 def chapter_create(request, story_id):
@@ -204,6 +201,8 @@ def chapter_create(request, story_id):
 
     return render(request, "stories/chapter_form.html", {"form": form, "story": story})
 
+# -----------------------------------------------
+# ------------------ View to create a new root chapter (season), with permission check
 
 @login_required
 def season_create(request, story_id):
@@ -225,7 +224,9 @@ def season_create(request, story_id):
         form = ChapterForm()
 
     return render(request, "stories/chapter_form.html", {"form": form, "story": story, "new_season": True})
+
 # -----------------------------------------------
+# ------------------ View to register and log in a new user
 
 def register_view(request):
     if request.method == 'POST':
@@ -239,13 +240,14 @@ def register_view(request):
     return render(request, 'registration/register.html', {'form': form})
 
 # -----------------------------------------------
+# ------------------ View for user profile: edit info, list stories, bookmarks, and unread comments
 
 @login_required
 def profile_view(request):
     user = request.user
     profile = user.userprofile
 
-    # ✅ Fetch unread comments on your stories or chapters
+    # Fetch unread comments on your stories or chapters
     unread_comments = Comment.objects.filter(
         Q(story__author=user) | Q(chapter__story__author=user),
         is_read=False
@@ -285,6 +287,7 @@ def profile_view(request):
 
 
 # -----------------------------------------------
+# ------------------ View to edit a chapter (only by its author)
 
 @login_required
 def chapter_edit(request, chapter_id):
@@ -307,6 +310,7 @@ def chapter_edit(request, chapter_id):
     })
 
 # -----------------------------------------------
+# ------------------ View to delete a chapter (only by its author)
 
 @login_required
 def chapter_delete(request, chapter_id):
@@ -319,6 +323,7 @@ def chapter_delete(request, chapter_id):
 
 
 # -----------------------------------------------
+# ------------------ Handle AJAX POST to rate a chapter (create or update)
 
 @require_POST
 @login_required
@@ -338,18 +343,15 @@ def rate_chapter(request):
         return JsonResponse({'success': True, 'rating': rating_value})
 
     except Exception as e:
-        print("Error in rate_chapter:", e)
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 # -----------------------------------------------
+# ------------------ Handle form-encoded AJAX POST to rate a chapter and return new average
 
 @require_POST
 @login_required
 def ajax_rate_chapter(request):
     try:
-        print("📥 RAW POST DATA:", request.body)
-        print("📥 POST:", request.POST)
-
         chapter_id = int(request.POST.get("chapter_id"))
         value = int(request.POST.get("value"))
 
@@ -363,15 +365,14 @@ def ajax_rate_chapter(request):
             defaults={'value': value}
         )
 
-
         avg = chapter.average_rating  # optional: use .aggregate(Avg) if needed
         return JsonResponse({"success": True, "average": round(avg, 1)})
 
     except Exception as e:
-        print("🔥 ERROR:", e)
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 # -----------------------------------------------
+# ------------------ View to edit a story (only by its author)
 
 @login_required
 def story_edit(request, story_id):
@@ -388,6 +389,7 @@ def story_edit(request, story_id):
     return render(request, "stories/story_edit.html", {"form": form, "story": story})
 
 # -----------------------------------------------
+# ------------------ View to delete a story (author only), with confirmation page
 
 @login_required
 def story_delete(request, story_id):
@@ -398,6 +400,7 @@ def story_delete(request, story_id):
     return render(request, "stories/story_confirm_delete.html", {"story": story})
 
 # -----------------------------------------------
+# ------------------ Handle AJAX POST to rate a story and return updated average
 
 @require_POST
 @login_required
@@ -425,6 +428,7 @@ def rate_story(request):
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 # -----------------------------------------------
+# ------------------ AJAX handlers to bookmark or unbookmark a story
 
 @login_required
 @require_POST
@@ -465,6 +469,7 @@ def toggle_follow(request, username):
     return redirect(request.POST.get('next') or reverse('profile', args=[username]))
 
 # -----------------------------------------------
+# ------------------ Toggle follow/unfollow for another user's profile
 
 @login_required
 def public_profile_view(request, username):
@@ -493,6 +498,7 @@ def public_profile_view(request, username):
 
 
 # -----------------------------------------------
+# ------------------ Add, edit, or delete comments on stories/chapters (login required)
 
 @login_required
 @require_POST
@@ -533,7 +539,6 @@ def edit_comment(request, comment_id):
     if form.is_valid():
         form.save()
     return redirect(request.META.get('HTTP_REFERER', '/'))
-
 
 
 @login_required

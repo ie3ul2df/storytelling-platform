@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 
+<!-- ------------------ Story top section: image, title, author, rating, follow/bookmark buttons -->
 
 <div class="container mt-4">
     <!-- Story Top Section: Title, Info, Image -->
@@ -19,8 +20,8 @@
             </div>
         </div>
 
+        <!-- ------------------ Story description and user rating interface -->
 
-        <!-- Info Side -->
         <div class="col-12 col-lg-8">
             <h1 class="fw-bold mb-2 text-dark">{{ story.title }}</h1>
             <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
@@ -65,7 +66,6 @@
                     </form>
                     {% endif %}
 
-
                     <!-- AJAX Bookmark Button -->
                     {% if user.is_authenticated %}
                     <button type="button" class="btn bookmark-btn story-bookmark-btn" data-story-id="{{ story.id }}"
@@ -76,17 +76,8 @@
                         <i class="bi {% if is_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}"></i>
                     </button>
                     {% endif %}
-
-
                 </div>
-
             </div>
-
-
-
-
-
-
 
 
             <div class="mb-2 main-story-desc">
@@ -94,6 +85,7 @@
             </div>
 
             <hr>
+
             <div>
                 {% if user.is_authenticated %}
                 <div class="rating-stars story-rating" data-story="{{ story.id }}"
@@ -109,20 +101,20 @@
             </div>
         </div>
 
-
+        <!-- ------------------ Toggle button and container for story comments -->
 
         <div class="d-flex-justify-content-end text-end">
-
             <button class="btn btn-sm btn-outline-secondary toggle-comments-btn mb-2 w-auto text-end border-0"
                 data-target="#story-comments">
                 💬 Read Comments ▼
             </button>
-
         </div>
 
         <div id="story-comments" class="story-comment-container d-none">
             <hr>
             <h5 class="text-muted">💬 Story Comments</h5>
+
+            <!-- ------------------ List of story comments with edit/delete options -->
 
             {% for comment in comments %}
             <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
@@ -149,7 +141,6 @@
                 {% if comment.user == user %}
                 <div class="d-flex gap-2 mt-2 edit-del-{{ comment.id }}">
                     <button class="btn btn-sm btn-warning edit-btn" data-id="{{ comment.id }}">✏️</button>
-
                     <form method="POST" action="{% url 'delete_comment' comment.id %}" class="delete-form"
                         onsubmit="return confirm('Delete this comment?');">
                         {% csrf_token %}
@@ -161,6 +152,8 @@
             {% empty %}
             <p class="text-muted">No comments yet.</p>
             {% endfor %}
+
+            <!-- ------------------ Story comment form (if authenticated) -->
 
             {% if user.is_authenticated %}
             <form method="POST" action="{% url 'add_story_comment' story.id %}">
@@ -174,29 +167,24 @@
             {% else %}
             <p><a href="{% url 'login' %}">Login</a> to comment on this story.</p>
             {% endif %}
-
         </div>
-
-
-
-
-
     </div>
 
-
+    <!-- ------------------ Chapter branches rendered as carousel slides -->
 
     <hr class="mb-4">
 
     {% for branch in branches %}
     <p class="mt-4 h2">Season {{ forloop.counter }} </p>
     <div id="carousel-{{ branch.parent.id }}" class="carousel slide mb-4">
-
         {% include "stories/_carousel_controls.html" with parent=branch.parent sorted_chapters=branch.sorted_chapters %}
-
         <div class="carousel-inner">
             {% for chapter in branch.sorted_chapters %}
             <div class="carousel-item {% if forloop.first %}active first-slide{% endif %}">
                 <div class="card {% if forloop.first %} shadow-sm{% endif %}">
+
+                    <!-- ------------------ Chapter card header: author, title, average rating -->
+
                     <div
                         class="card-header bg-light d-flex flex-column flex-sm-row justify-content-between align-items-center">
                         <span class="mb-2 mb-sm-0">
@@ -212,6 +200,9 @@
                             {{ chapter.rating_count }} user{{ chapter.rating_count|pluralize }} rated
                         </small>
                     </div>
+
+                    <!-- ------------------ Chapter content body with rating and author controls -->
+
                     <div class="card-body">
                         <div class="mb-2 user-chapter-desc">
                             <span>{{ chapter.content|linebreaks }}</span>
@@ -243,28 +234,27 @@
                             </div>
                             {% endif %}
                         </div>
-
-
                     </div>
 
+                    <!-- ------------------ Toggle button and container for chapter comments -->
 
                     <div class="d-flex-justify-content-end text-end">
-
                         <button
                             class="btn btn-sm btn-outline-secondary toggle-comments-btn mb-2 w-auto text-end border-0"
                             data-target="#chapter-comments-{{ chapter.id }}">
                             💬 Read Comments ▼
                         </button>
-
                     </div>
-
 
 
                     <div id="chapter-comments-{{ chapter.id }}" class="p-2 chapter-comment-container d-none">
 
                         <hr>
+
                         <div class="mt-4">
                             <h5 class="text-muted">💬 Chapter Comments</h5>
+
+                            <!-- ------------------ List of chapter comments with edit/delete controls -->
 
                             {% for comment in chapter.comments.all %}
                             <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
@@ -304,6 +294,8 @@
                             <p class="text-muted small">No comments yet.</p>
                             {% endfor %}
 
+                            <!-- ------------------ Chapter comment form (if authenticated) -->
+
                             {% if user.is_authenticated and chapter.id %}
                             <form method="POST" action="{% url 'add_chapter_comment' chapter.id %}" class="mt-3">
                                 {% csrf_token %}
@@ -317,22 +309,13 @@
                             <p class="text-muted small">Login to comment on this chapter.</p>
                             {% endif %}
                         </div>
-
-
                     </div>
-
-
-
-
-
-
-
-
-
                 </div>
             </div>
             {% endfor %}
         </div>
+
+        <!-- ------------------ Button to add a new chapter to current season -->
 
         {% if user.is_authenticated %}
         {% with branch.sorted_chapters|first as season_root %}
@@ -343,9 +326,10 @@
         </div>
         {% endwith %}
         {% endif %}
-
     </div>
     {% endfor %}
+
+    <!-- ------------------ Button to add a new season (root chapter) -->
 
     {% if story.allow_contributions or story.author.id == user.id %}
     {% with branches|last as last_branch %}
@@ -358,6 +342,8 @@
     {% endwith %}
     {% endwith %}
     {% endif %}
+
+    <!-- ------------------ JavaScript includes for rating and comment interactivity -->
 
     <script src="{% static 'js/rating.js' %}"></script>
     <script src="{% static 'js/comment.js' %}"></script>
