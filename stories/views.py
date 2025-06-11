@@ -8,6 +8,7 @@ from django.db.models import F, Q, Avg, Count
 from django.core.paginator import Paginator
 from django.urls import reverse
 import json
+from collections import defaultdict
 from .forms import RegisterForm, RatingForm
 from .models import Story, Chapter, Rating, UserProfile, StoryRating, Bookmark, Comment
 from .forms import StoryForm, ChapterForm, UserProfileForm, CommentForm
@@ -139,6 +140,16 @@ def story_detail(request, story_id):
         if obj:
             story_user_rating = obj.value  # .value should be an int field
 
+    # Group chapters by index across all branches
+    grouped_chapters = defaultdict(list)
+
+    for branch in branches:
+        for i, chapter in enumerate(branch['sorted_chapters'], start=1):
+            grouped_chapters[i].append(chapter)
+
+    # Optional: Convert defaultdict to regular dict (cleaner in templates)
+    grouped_chapters = dict(grouped_chapters)
+
     return render(request, 'stories/story_detail.html', {
         'story': story,
         'branches': branches,
@@ -149,6 +160,7 @@ def story_detail(request, story_id):
         'comment_form': comment_form,
         'comments': comments,
     })
+
 
 
 # -----------------------------------------------
