@@ -183,3 +183,10 @@ input#id_title {
 #user-login-form-storygram > p:nth-child(3) > label {
   font-weight: bold;
 }
+
+/* --------------- Users public profile page --------------- */
+.users-public-profile-about {
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 20px;
+  border-radius: 10px;
+}
