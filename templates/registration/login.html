@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Login</h2>
-<form method="post">
+<form id="user-login-form-storygram" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Login</button>
+    <button type="submit" class="btn btn-success mb-4">Login</button>
 </form>
 <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
 {% endblock %}

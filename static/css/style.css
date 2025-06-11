@@ -165,3 +165,21 @@ textarea#id_description,
 input#id_title {
   width: 100%;
 }
+
+/* --------------- Login & Register Page --------------- */
+#user-reg-form > p:nth-child(2) > label,
+#user-reg-form > p:nth-child(3) > label,
+#user-reg-form > p:nth-child(6) > label {
+  display: block;
+  font-weight: bold;
+}
+
+#id_username_helptext,
+#id_password2_helptext {
+  display: block;
+}
+
+#user-login-form-storygram > p:nth-child(2) > label,
+#user-login-form-storygram > p:nth-child(3) > label {
+  font-weight: bold;
+}
