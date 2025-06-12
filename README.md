@@ -530,3 +530,116 @@ The **Storygram** application uses a relational database structure that reflects
 ---
 
 The database schema is designed for flexibility in storytelling: allowing branching chapters, public/private visibility, rating systems, collaborative input, and rich user interactions through following, bookmarking, and commenting.
+
+---
+
+## 🔧 Features
+
+### ✅ Implemented Features
+
+Each of the following features corresponds to key user stories and supports core interactions on the Storygram platform:
+
+#### 📖 Story Management
+
+- Users can create, edit, and delete their own stories.
+- Each story includes a title, description, image, public/private toggle, and collaboration option.
+- Stories display author info, creation date, and story rating.
+
+#### 🧩 Chapter Creation & Branching
+
+- Authors and contributors can add chapters to stories.
+- Support for **branching storylines** via parent-child relationships (forked narratives).
+- Chapters are automatically sorted and threaded to represent the story flow.
+
+#### 🌟 Rating System
+
+- Logged-in users can rate both **chapters** and **entire stories** (1 to 5 stars).
+- Each user can rate a story/chapter only once (enforced via unique constraints).
+- Ratings are averaged and displayed per item (used in ranking logic on homepage).
+
+#### 👤 User Profiles
+
+- Every user has a profile page with:
+  - Profile image (Cloudinary)
+  - Full name, bio (“About Me”), contact email
+  - Followers and following counters
+- Follow system: Users can follow/unfollow others. Following is one-way (asymmetric).
+- Profiles show all authored stories and contributions.
+
+#### 🔔 Notification System
+
+- Users receive **on-profile notifications** for:
+  - New comments on their stories/chapters
+  - Replies to their comments
+  - New followers
+- Future versions may support push or email alerts.
+
+#### 💬 Comments & Replies
+
+- Users can comment on both stories and individual chapters.
+- Supports threaded replies using self-referencing relationships.
+- Unread comments are tracked via `is_read` for future notifications.
+
+#### 🔖 Bookmarks
+
+- Users can bookmark stories for quick access.
+- One bookmark per user per story (duplicates prevented via constraints).
+- Bookmarked stories are listed in the user’s profile.
+
+#### 🔍 Advanced Search
+
+- Users can search for stories by:
+  - Title
+  - Author name
+  - Keywords
+  - Rating
+- Search input is available on the homepage and filters live results.
+
+#### 📱 Responsive UI
+
+- The platform is fully responsive across mobile, tablet, and desktop breakpoints.
+- Designed using Bootstrap 5 grid system and responsive classes.
+
+#### 🧭 Smart Navigation & Admin Panel Access
+
+- A consistent top navigation bar is present across all pages.
+- If the logged-in user is an admin/superuser, an **Admin Panel** button is visible in the navbar linking to Django admin.
+
+#### 📑 Pagination
+
+- Homepage story list supports pagination to enhance loading speed and user experience.
+- Dynamically loads stories page-by-page using Django’s pagination tools.
+
+#### 🔐 Authentication & Authorization
+
+- Django Allauth provides secure login, logout, and registration.
+- Authenticated users can manage their own content.
+- Only logged-in users can post comments, rate, and bookmark.
+
+#### 🏠 Dynamic Homepage
+
+- Homepage displays top stories based on total rank (combined rating of chapters and story).
+- Features carousel-style previews and highest-rated content from each storyline branch.
+
+---
+
+### 🧪 Additional Features
+
+- Validation with W3C (HTML/CSS), JSHint, and PEP8.
+- Cross-browser support: tested on Chrome, Firefox, and Edge.
+- Lighthouse tested: Accessibility and SEO scores above 90.
+
+---
+
+### 🚀 Future Features
+
+These are planned for future releases to enhance interactivity and engagement:
+
+- 📲 **Push & Email Alerts**: Extend notifications beyond profile view.
+- 🏷️ **Tagging & Categories**: Organise stories by genre or theme.
+- 💡 **Story Drafts**: Save stories/chapters without publishing immediately.
+- 📊 **Analytics Dashboard**: View story views, reads, and engagement metrics.
+- 💬 **Live Collaboration**: Real-time chapter editing with other users.
+- ✨ **Dark Mode Toggle**: Improve readability for night-time users.
+
+---
