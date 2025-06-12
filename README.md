@@ -848,4 +848,56 @@ Below is the full file structure of the project:
 - **`db.sqlite3`** – The SQLite database used during development.
 - **`manage.py`** – Django’s command-line utility.
 
-This layout ensures modularity, clarity, and ease of collaboration for future development.
+## This layout ensures modularity, clarity, and ease of collaboration for future development.
+
+## 📝 Credits ✅
+
+- **Images & Icons**
+
+  - Default story image provided by Cloudinary: [default-story-image_ttrfqb.webp](https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-story-image_ttrfqb.webp)
+  - Profile placeholder image sourced from Cloudinary: [default-profile-image_oe2lqb.jpg](https://res.cloudinary.com/ddo1eszpe/image/upload/v1749497011/default-profile-image_oe2lqb.jpg)
+  - Bootstrap Icons by [Bootstrap Icons](https://icons.getbootstrap.com/)
+
+- **Code & Snippets**
+
+  - AJAX bookmark logic inspired by Django docs: https://docs.djangoproject.com/en/stable/ref/csrf/
+  - Star rating UI pattern adapted from various online examples (e.g. [StackOverflow discussion on JS star rating](https://stackoverflow.com/questions/xxxx))
+
+- **Help & Inspiration**
+  - Django course materials and guidance from Northumbria University tutors
+  - Community support on the Django and JavaScript tags at StackOverflow
+  - Wireframing with Balsamiq (free trial)
+
+---
+
+## 🔮 Future Features / Known Issues ✅
+
+- **Future Features**
+
+  - Real-time notifications for new comments, ratings, and follows
+  - WebSocket-powered live updates of chapter rankings
+  - Tagging and categorization of stories for improved discovery
+  - REST API endpoints for external integrations and mobile apps
+
+- **Known Issues / Limitations**
+  - No email notifications currently — users must refresh to see new interactions
+  - Profile image upload lacks client-side resizing
+  - Comment pagination not yet implemented for very large threads
+  - Mobile carousel swipe support could be improved
+
+---
+
+## 📄 License ✅
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📞 Contact
+
+- **Live Demo:** [Deployed on Heroku](https://storytelling-platform-d6e2460bf9a1.herokuapp.com/)
+- **Author:** Arash Javadi
+- **Email:** arash11javadi@gmail.com
+- **Phone:** 07506 205 023
+
+Feel free to reach out with any questions, feedback, or collaboration ideas!
