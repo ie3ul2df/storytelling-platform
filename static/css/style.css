@@ -112,6 +112,15 @@ a {
   font-weight: bold;
 }
 
+@media screen and (max-width: 549px) {
+  .author-rank-cont {
+    display: block !important;
+  }
+  .author-rank-cont a {
+    margin-bottom: 10px;
+  }
+}
+
 /* --------------- Profile Page --------------- */
 .user-profile-image {
   width: 120px;
