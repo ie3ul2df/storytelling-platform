@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- ------------------ Public user profile header with image and name -->
+<!--  Public user profile header with image and name -->
 
 <div class="container py-4 text-center">
     <h2 class="fw-bold">{{ profile.user.username }}'s Profile</h2>
@@ -12,13 +12,13 @@
 
     <p class="fw-bold">User's Full-name: {{ profile.full_name|default:profile.user.username }}</p>
 
-    <!-- ------------------ Display user's contact email if available -->
+    <!--  Display user's contact email if available -->
 
     {% if profile.contact_email %}
     <p class="text-muted">📧 Contact: <a href="mailto:{{ profile.contact_email }}">{{ profile.contact_email }}</a></p>
     {% endif %}
 
-    <!-- ------------------ Display user's bio/about section if available -->
+    <!--  Display user's bio/about section if available -->
 
     {% if profile.about %}
     <div class="text-start mx-auto my-4 users-public-profile-about" style="max-width: 600px;">
@@ -27,7 +27,7 @@
     </div>
     {% endif %}
 
-    <!-- ------------------ Follow/Unfollow button with form submission -->
+    <!--  Follow/Unfollow button with form submission -->
 
     <form method="post" action="{% url 'toggle_follow' profile.user.username %}" class="mb-4">
         {% csrf_token %}
@@ -41,7 +41,7 @@
 
     <hr>
 
-    <!-- ------------------ Public stories list section with cards -->
+    <!--  Public stories list section with cards -->
 
     <h4 class="mb-3">📚 Public Stories</h4>
     {% if user_stories %}

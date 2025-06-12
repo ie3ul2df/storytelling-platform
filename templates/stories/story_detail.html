@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-<!-- ------------------ Story top section: image, title, author, rating, follow/bookmark buttons -->
+<!-- Story top section: image, title, author, rating, follow/bookmark buttons -->
 
 <div class="container mt-4">
     <!-- Story Top Section: Title, Info, Image -->
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <!-- ------------------ Story description and user rating interface -->
+        <!-- Story description and user rating interface -->
 
         <div class="col-12 col-lg-8">
             <h1 class="fw-bold mb-2 text-dark">{{ story.title }}</h1>
@@ -101,7 +101,7 @@
             </div>
         </div>
 
-        <!-- ------------------ Toggle button and container for story comments -->
+        <!-- Toggle button and container for story comments -->
 
         <div class="d-flex-justify-content-end text-end">
             <button class="btn btn-sm btn-outline-secondary toggle-comments-btn mb-2 w-auto text-end border-0"
@@ -114,7 +114,7 @@
             <hr>
             <h5 class="text-muted">💬 Story Comments</h5>
 
-            <!-- ------------------ List of story comments with edit/delete options -->
+            <!-- List of story comments with edit/delete options -->
 
             {% for comment in comments %}
             <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
@@ -153,7 +153,7 @@
             <p class="text-muted">No comments yet.</p>
             {% endfor %}
 
-            <!-- ------------------ Story comment form (if authenticated) -->
+            <!-- Story comment form (if authenticated) -->
 
             {% if user.is_authenticated %}
             <form method="POST" action="{% url 'add_story_comment' story.id %}">
@@ -170,7 +170,7 @@
         </div>
     </div>
 
-    <!-- ------------------ Chapter branches rendered as carousel slides -->
+    <!-- Chapter branches rendered as carousel slides -->
 
     <hr class="mb-4">
 
@@ -183,7 +183,7 @@
             <div class="carousel-item {% if forloop.first %}active first-slide{% endif %}">
                 <div class="card {% if forloop.first %} shadow-sm{% endif %}">
 
-                    <!-- ------------------ Chapter card header: author, title, average rating -->
+                    <!-- Chapter card header: author, title, average rating -->
 
                     <div
                         class="card-header bg-light d-flex flex-column flex-sm-row justify-content-between align-items-center">
@@ -201,7 +201,7 @@
                         </small>
                     </div>
 
-                    <!-- ------------------ Chapter content body with rating and author controls -->
+                    <!-- Chapter content body with rating and author controls -->
 
                     <div class="card-body">
                         <div class="mb-2 user-chapter-desc">
@@ -236,7 +236,7 @@
                         </div>
                     </div>
 
-                    <!-- ------------------ Toggle button and container for chapter comments -->
+                    <!-- Toggle button and container for chapter comments -->
 
                     <div class="d-flex-justify-content-end text-end">
                         <button
@@ -254,7 +254,7 @@
                         <div class="mt-4">
                             <h5 class="text-muted">💬 Chapter Comments</h5>
 
-                            <!-- ------------------ List of chapter comments with edit/delete controls -->
+                            <!-- List of chapter comments with edit/delete controls -->
 
                             {% for comment in chapter.comments.all %}
                             <div class="mb-3 ps-3 border-start border-2" id="comment-{{ comment.id }}">
@@ -294,7 +294,7 @@
                             <p class="text-muted small">No comments yet.</p>
                             {% endfor %}
 
-                            <!-- ------------------ Chapter comment form (if authenticated) -->
+                            <!-- Chapter comment form (if authenticated) -->
 
                             {% if user.is_authenticated and chapter.id %}
                             <form method="POST" action="{% url 'add_chapter_comment' chapter.id %}" class="mt-3">
@@ -315,7 +315,7 @@
             {% endfor %}
         </div>
 
-        <!-- ------------------ Button to add a new chapter to current season -->
+        <!-- Button to add a new chapter to current season -->
 
         {% if user.is_authenticated %}
         {% with branch.sorted_chapters|first as season_root %}
@@ -329,7 +329,7 @@
     </div>
     {% endfor %}
 
-    <!-- ------------------ Button to add a new season (root chapter) -->
+    <!-- Button to add a new season (root chapter) -->
 
     {% if story.allow_contributions or story.author.id == user.id %}
     {% with branches|last as last_branch %}
@@ -343,7 +343,7 @@
     {% endwith %}
     {% endif %}
 
-    <!-- ------------------ JavaScript includes for rating and comment interactivity -->
+    <!-- JavaScript includes for rating and comment interactivity -->
 
     <script src="{% static 'js/rating.js' %}"></script>
     <script src="{% static 'js/comment.js' %}"></script>
