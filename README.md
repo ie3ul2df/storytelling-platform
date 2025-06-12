@@ -533,7 +533,7 @@ The database schema is designed for flexibility in storytelling: allowing branch
 
 ---
 
-## 🔧 Features
+## 🔧 Application Features
 
 ### ✅ Implemented Features
 
@@ -641,5 +641,46 @@ These are planned for future releases to enhance interactivity and engagement:
 - 📊 **Analytics Dashboard**: View story views, reads, and engagement metrics.
 - 💬 **Live Collaboration**: Real-time chapter editing with other users.
 - ✨ **Dark Mode Toggle**: Improve readability for night-time users.
+
+---
+
+## ⚙️ Technologies Used ✅
+
+For this project I use lots of technologies but the below listed technologies were the most important ones which I used to build and deploy this project:
+
+### 🧱 Core Frameworks & Libraries
+
+- **Python 3.12** – Core programming language
+- **Django 5.2.2** – High-level web framework for building secure and scalable applications
+- **Django Allauth** – Handles authentication, registration, and account management
+- **Crispy Forms with Bootstrap 5** – Enhanced form rendering
+- **Cloudinary** – Media management and hosting for user-uploaded images
+- **PostgreSQL** – Production database used on Heroku
+
+### 🎨 Frontend
+
+- **Bootstrap 5** – Responsive grid system and UI components
+- **HTML5** – Markup language for structuring web content
+- **CSS3** – Styling for layout, typography, and UI
+- **JavaScript (vanilla)** – Frontend interactivity (rating system, dynamic UI, etc.)
+- **Jinja Templates** – Django’s templating engine for rendering dynamic content
+
+### 🛠️ Tools & Utilities
+
+- **Git** – Version control for tracking changes
+- **GitHub** – Repository hosting and collaboration
+- **Heroku** – Cloud platform for app deployment and hosting
+- **Gunicorn** – WSGI HTTP server for running Django on Heroku
+- **Whitenoise** – Serves static files efficiently in production
+- **dj-database-url & psycopg2** – Database connection and compatibility with Heroku
+- **Django Extensions** – Used for generating ERD and other development utilities
+- **Graphviz / pydotplus** – For visualising data models (Entity Relationship Diagram)
+
+### ✅ Validators & Testing Tools
+
+- **W3C HTML/CSS Validators** – Standards compliance
+- **JSHint** – JavaScript code quality check
+- **flake8** – Python linting for PEP8 compliance
+- **Lighthouse** – Performance, accessibility, and SEO testing
 
 ---
