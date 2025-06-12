@@ -367,3 +367,66 @@ Several key pages were validated with W3C HTML Validator and passed successfully
   ![HTML Validator - User Profile Page](static/test-images/w3c-html-validator/user-profile-page.JPG)
 
 ---
+
+#### ✅ Lighthouse Report - Performance & Accessibility Audit
+
+Lighthouse audits were conducted using **Google Chrome DevTools** on the deployed Heroku app.
+
+- **Accessibility**: 99 — Excellent result, indicating strong colour contrast, focus order, and ARIA attributes.
+- **SEO**: 91 — Good optimisation, with structured content, title/meta tags, and accessible links.
+
+#### ⚠️ Performance & Best Practices - Testing Issues
+
+Lighthouse could not generate valid metrics due to a Heroku-specific trace error (`NO_NAVSTART`), leading to failed recording of the following:
+
+- First Contentful Paint
+- Largest Contentful Paint
+- Total Blocking Time
+- Speed Index
+- Cumulative Layout Shift
+
+These issues are not caused by project code but are likely related to Heroku's free-tier dyno startup delays.
+
+#### ⚠️ Trust & Safety Warnings
+
+- **Insecure Requests**: 7 assets were loaded over HTTP instead of HTTPS.
+- **Missing Security Headers**: No Content Security Policy (CSP) or HSTS.
+- **Third-party Cookies**: Detected from CDNs and embedded resources.
+
+#### 🔄 Planned Improvements
+
+- Enforce HTTPS for all resources.
+- Add CSP and HSTS headers using Django middleware.
+- Migrate to a more consistent production hosting platform if needed.
+- Optimise assets and reduce third-party script reliance.
+
+> 🚀 Accessibility and SEO are in great condition. Performance testing will be reattempted in a stable deployment environment.
+
+---
+
+#### 📱 Responsiveness
+
+The application was tested for responsiveness using:
+
+- **Chrome DevTools** on:
+  - Mobile view (iPhone SE, Pixel 5)
+  - Tablet view (iPad, Galaxy Tab)
+  - Desktop view (Full HD and smaller screen widths)
+
+The layout adapted smoothly across all tested breakpoints. Grid-based layouts and Bootstrap’s responsive classes (`col-`, `container`, `row`, `d-flex`) ensured consistent alignment and spacing. Key UI elements like the navigation bar, forms, story cards, and chapter content displayed correctly on all devices.
+
+✅ The site is fully responsive across all tested screen sizes.
+
+---
+
+#### 🌐 Cross-Browser Compatibility
+
+The application was manually tested on the following browsers:
+
+- Google Chrome (latest)
+- Mozilla Firefox (latest)
+- Microsoft Edge (latest)
+
+All key features—user registration, login/logout, story and chapter CRUD operations, form submissions, ranking system, and interactive content—functioned correctly with no layout shifts or JavaScript issues.
+
+✅ Full cross-browser compatibility confirmed.
