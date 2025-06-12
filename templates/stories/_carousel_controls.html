@@ -6,7 +6,7 @@
     <div class="carousel-indicators m-0">
         {% for chapter in sorted_chapters %}
         <button type="button" data-bs-target="#carousel-{{ parent.id }}" data-bs-slide-to="{{ forloop.counter0 }}"
-            class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}"
+            class="{% if forloop.first %}active{% endif %}" {% if forloop.first %}aria-current="true" {% endif %}
             aria-label="Slide {{ forloop.counter }}">
         </button>
         {% endfor %}
