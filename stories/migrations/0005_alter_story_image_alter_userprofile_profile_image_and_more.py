@@ -9,31 +9,64 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0004_story_image'),
+        ("stories", "0004_story_image"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='story',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, default='default-story-image_ttrfqb', max_length=255, null=True, verbose_name='image'),
+            model_name="story",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default="default-story-image_ttrfqb",
+                max_length=255,
+                null=True,
+                verbose_name="image",
+            ),
         ),
         migrations.AlterField(
-            model_name='userprofile',
-            name='profile_image',
-            field=cloudinary.models.CloudinaryField(blank=True, default='default-profile-image_oe2lqb', max_length=255, null=True, verbose_name='image'),
+            model_name="userprofile",
+            name="profile_image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default="default-profile-image_oe2lqb",
+                max_length=255,
+                null=True,
+                verbose_name="image",
+            ),
         ),
         migrations.CreateModel(
-            name='StoryRating',
+            name="StoryRating",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.PositiveSmallIntegerField()),
-                ('story', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ratings', to='stories.story')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.PositiveSmallIntegerField()),
+                (
+                    "story",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="ratings",
+                        to="stories.story",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('story', 'user')},
+                "unique_together": {("story", "user")},
             },
         ),
     ]
