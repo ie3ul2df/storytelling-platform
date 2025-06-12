@@ -1,3 +1,6 @@
+/* jshint esversion: 6 */
+/* global bootstrap */
+
 // ------------------ Shows comment edit form and hides original text when edit button is clicked
 
 document.querySelectorAll(".edit-btn").forEach((button) => {
@@ -64,5 +67,5 @@ document.addEventListener("DOMContentLoaded", function () {
 // ------------------ Initialize all Bootstrap carousels on the page
 
 document.querySelectorAll(".carousel").forEach((el) => {
-  new bootstrap.Carousel(el);
+  new bootstrap.Carousel(el); // jshint ignore:line
 });

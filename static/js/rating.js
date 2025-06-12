@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // ------------------ Get cookie value by name
 
 function getCookie(name) {

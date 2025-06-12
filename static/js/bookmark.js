@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // ------------------ Logs script load and defines function to get CSRF token from cookies
 
 function getCookie(name) {
