@@ -848,9 +848,9 @@ Below is the full file structure of the project:
 - **`db.sqlite3`** – The SQLite database used during development.
 - **`manage.py`** – Django’s command-line utility.
 
-## This layout ensures modularity, clarity, and ease of collaboration for future development.
+This layout ensures modularity, clarity, and ease of collaboration for future development.
 
-## 📝 Credits ✅
+### 📝 Credits ✅
 
 - **Images & Icons**
 
@@ -870,7 +870,7 @@ Below is the full file structure of the project:
 
 ---
 
-## 🔮 Future Features / Known Issues ✅
+### 🔮 Future Features / Known Issues ✅
 
 - **Future Features**
 
@@ -887,13 +887,13 @@ Below is the full file structure of the project:
 
 ---
 
-## 📄 License ✅
+### 📄 License ✅
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📞 Contact
+### 📞 Contact
 
 - **Live Demo:** [Deployed on Heroku](https://storytelling-platform-d6e2460bf9a1.herokuapp.com/)
 - **Author:** Arash Javadi
