@@ -287,7 +287,18 @@ Users can now rate chapters with immediate feedback, and carousels reflect dynam
 
 ---
 
-### 💻 Code Validation & Linting (Python)
+### ✅ HTML/CSS/JS/Python Validation
+
+All code files were validated using the appropriate online tools. Minor warnings were fixed during the process and all files now pass validation successfully.
+
+#### 🧾 Validators Used:
+
+- **HTML** — [W3C HTML Validator](https://validator.w3.org/)
+- **CSS** — [W3C CSS Validator](https://jigsaw.w3.org/css-validator/)
+- **JavaScript** — [JSHint](https://jshint.com/)
+- **Python** — [PEP8 Online](http://pep8online.com/) and `flake8`
+
+#### 💻 Code Validation & Linting (Python)
 
 **🧾 Code Formatting & Linting Log – `stories` App**
 
@@ -304,3 +315,55 @@ black stories/
 autoflake --remove-all-unused-imports --in-place --recursive stories/
 flake8 stories
 ```
+
+#### ✅ Python Code - PEP8 Compliance
+
+All Python files were checked using `flake8` and are now free of PEP8 warnings and errors.
+
+![Flake8 Python Validation](static/test-images/flake8-python-validation/all-python-files.JPG)
+
+---
+
+#### ✅ JavaScript Files - JSHint Results
+
+Each JavaScript file was validated using JSHint with no major issues found.
+
+- **bookmarks.js**
+
+  ![bookmarks.js Validation](static/test-images/jshint-validator/bookmarks.js-file.JPG)
+
+- **comment.js**
+
+  ![comment.js Validation](static/test-images/jshint-validator/comment.js-file.JPG)
+
+- **rating.js**
+
+  ![rating.js Validation](static/test-images/jshint-validator/rating.js-file.JPG)
+
+---
+
+#### ✅ CSS File - W3C CSS Validator
+
+The main stylesheet was validated and passed with no critical issues.
+
+![CSS Validator - style.css](static/test-images/w3c-css-validator/style.css-file.JPG)
+
+---
+
+#### ✅ HTML Files - W3C HTML Validator
+
+Several key pages were validated with W3C HTML Validator and passed successfully.
+
+- **Home Page**
+
+  ![HTML Validator - Home Page](static/test-images/w3c-html-validator/home.JPG)
+
+- **Story Detail Page**
+
+  ![HTML Validator - Story Detail Page](static/test-images/w3c-html-validator/story-detail-page.JPG)
+
+- **User Profile Page**
+
+  ![HTML Validator - User Profile Page](static/test-images/w3c-html-validator/user-profile-page.JPG)
+
+---
