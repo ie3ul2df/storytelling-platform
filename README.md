@@ -850,7 +850,7 @@ Below is the full file structure of the project:
 
 This layout ensures modularity, clarity, and ease of collaboration for future development.
 
-### 📝 Credits ✅
+## 📝 Credits ✅
 
 - **Images & Icons**
 
@@ -870,7 +870,7 @@ This layout ensures modularity, clarity, and ease of collaboration for future de
 
 ---
 
-### 🔮 Future Features / Known Issues ✅
+## 🔮 Future Features / Known Issues ✅
 
 - **Future Features**
 
@@ -887,13 +887,13 @@ This layout ensures modularity, clarity, and ease of collaboration for future de
 
 ---
 
-### 📄 License ✅
+## 📄 License ✅
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-### 📞 Contact
+## 📞 Contact
 
 - **Live Demo:** [Deployed on Heroku](https://storytelling-platform-d6e2460bf9a1.herokuapp.com/)
 - **Author:** Arash Javadi
