@@ -686,3 +686,79 @@ For this project I use lots of technologies but the below listed technologies we
 - **Lighthouse** – Performance, accessibility, and SEO testing
 
 ---
+
+## 🔄 Version Control & Git Usage ✅
+
+This project was developed using Git for version control and GitHub for remote repository management.
+
+- ✅ **Consistent Commits**: Commits were made frequently to ensure continuous tracking of progress and to allow for easier debugging and feature rollback when needed.
+  ![Project completation process](static/github-activities/commit-activity.jpg)
+- ✍️ **Clear Commit Messages**: Each commit includes descriptive messages following best practices to explain the change introduced (e.g., `Add chapter rating model`, `Fix responsiveness on story detail page`, `Refactor comment form layout`).
+  ![Project completation process](static/github-activities/commits-screenshot.jpg)
+- 🌿 **Branching Workflow**: While the project was mainly developed on the `main` branch for simplicity, isolated features and experimental functionalities were occasionally tested on temporary branches before merging into the main branch.
+- 🔄 **Push & Pull Cycle**: Regular pushes ensured the remote repository stayed up to date with local changes, providing a reliable backup and enabling deployment through GitHub-Heroku integration.
+
+Overall, Git played a central role in maintaining a clean development history, enabling version tracking, and supporting smooth collaboration if the project expands in the future.
+
+---
+
+## 🚀 Deployment ✅
+
+### 🖥️ Local Installation
+
+#### 1. Clone the repository
+
+- `git clone https://github.com/yourusername/storytelling-platform.git`
+- `cd storytelling-platform`
+
+#### 2. Create & activate virtual environment
+
+- `python3 -m venv env`
+- `source env/bin/activate` _# On Windows: `env\Scripts\activate`_
+
+#### 3. Install dependencies
+
+- `pip install -r requirements.txt`
+
+#### 4. Environment Variables (.env)
+
+- `SECRET_KEY=your-django-secret-key`
+- `DEBUG=True`
+- `ALLOWED_HOSTS=localhost,127.0.0.1`
+- `DATABASE_URL=your-local-database-url`
+
+#### 5. Apply migrations & run server
+
+- `python manage.py migrate`
+- `python manage.py runserver`
+
+---
+
+### ☁️ Heroku Deployment
+
+#### 1. Push to GitHub
+
+- Ensure repo is up-to-date on GitHub
+
+#### 2. Create & connect Heroku app
+
+- `heroku create your-app-name`
+- Link GitHub repo via Heroku dashboard
+
+#### 3. Config Vars on Heroku
+
+- `SECRET_KEY` → your production secret
+- `DEBUG=False`
+- `ALLOWED_HOSTS=your-app-name.herokuapp.com`
+- `DATABASE_URL` → (auto-added by Heroku Postgres)
+
+#### 4. Deploy (CLI method)
+
+- `heroku login`
+- `heroku git:remote -a your-app-name`
+- `git push heroku main`
+
+#### 5. Post-deploy tasks
+
+- `heroku run python manage.py migrate`
+- `heroku run python manage.py createsuperuser`
