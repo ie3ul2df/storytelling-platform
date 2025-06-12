@@ -762,3 +762,121 @@ Overall, Git played a central role in maintaining a clean development history, e
 
 - `heroku run python manage.py migrate`
 - `heroku run python manage.py createsuperuser`
+
+---
+
+## 🛡️ Security Measures ✅
+
+Security was a key focus throughout the development of this storytelling platform. Several standard and recommended security measures were implemented to protect user data and ensure safe interactions.
+
+- 🔐 **CSRF Protection:** Django’s built-in Cross-Site Request Forgery (CSRF) tokens were used in all POST forms to protect against CSRF attacks.
+- 🔑 **Login-Required Views:** Certain views — such as creating stories, submitting chapters, or accessing the user profile — are restricted to authenticated users only using Django’s `@login_required` decorator.
+- ✅ **Form Validation:** All forms were built using Django’s form system, which provides automatic and custom validations to prevent malformed or unsafe data from being submitted.
+- 🌐 **Environment Variables:** Sensitive information such as the `SECRET_KEY` and database credentials were stored in environment variables using a `.env` file and `python-decouple` (or `os.environ`) for secure access.
+- 🔒 **Secure Logout:** The logout functionality uses POST requests and CSRF protection to avoid being triggered by malicious links.
+- 🛠️ **Admin-Only Features:** Access to Django’s admin interface and certain site actions are restricted to staff/superusers to prevent unauthorized changes.
+
+These measures help ensure a safe and stable user experience, while following best practices for web application security.
+
+---
+
+## 📁 File Structure ✅
+
+Below is the full file structure of the project:
+
+```
+├── .flake8
+├── .gitignore
+├── db.sqlite3
+├── env.py
+├── erd.dot
+├── manage.py
+├── Procfile
+├── README.md
+├── requirements.txt
+├── runtime.txt
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── erd.jpg
+│   ├── favicon.ico
+│   ├── github-activities/
+│   │   ├── commit-activity.jpg
+│   │   ├── commits-screenshot.jpg
+│   │   └── github-project-user-stories.jpg
+│   ├── js/
+│   │   ├── bookmark.js
+│   │   ├── comment.js
+│   │   └── rating.js
+│   ├── prototypes/
+│   │   ├── mockups/
+│   │   │   ├── home-mobile-size.jpg
+│   │   │   ├── home-tablet-size.jpg
+│   │   │   ├── home-wide-screen.jpg
+│   │   │   ├── profile-tablet-and-mobile-size.jpg
+│   │   │   ├── profile-wide-screen.jpg
+│   │   │   ├── storypage-tablet-and-mobile-size.jpg
+│   │   │   └── storypage-wide-screen.jpg
+│   │   └── wireframes/
+│   │       ├── home-mobile-size.png
+│   │       ├── home-tablet-size.png
+│   │       ├── home-wide-screen.png
+│   │       ├── profile-tablet-and-mobile-size.png
+│   │       ├── profile-wide-screen.png
+│   │       ├── storypage-tablet-and-mobile-size.png
+│   │       └── storypage-wide-screen.png
+│   └── test-images/
+│       ├── flake8-python-validation/
+│       │   └── all-python-files.JPG
+│       ├── jshint-validator/
+│       │   ├── bookmarks.js-file.JPG
+│       │   ├── comment.js-file.JPG
+│       │   └── rating.js-file.JPG
+│       ├── w3c-css-validator/
+│       │   └── style.css-file.JPG
+│       └── w3c-html-validator/
+│           ├── home.JPG
+│           ├── story-detail-page.JPG
+│           └── user-profile-page.JPG
+├── stories/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+├── storytelling_platform/
+│   ├── asgi.py
+│   ├── db.sqlite3
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+└── templates/
+    ├── base.html
+    ├── registration/
+    │   ├── login.html
+    │   ├── logged_out.html
+    │   └── register.html
+    └── stories/
+        ├── _carousel_controls.html
+        ├── _chapter_body.html
+        ├── chapter_form.html
+        ├── profile.html
+        ├── public_profile.html
+        ├── story_detail.html
+        ├── story_edit.html
+        ├── story_form.html
+        └── story_list.html
+```
+
+### 🔍 Folder Breakdown
+
+- **`static/`** – Contains all static assets: CSS, JavaScript, mockups, wireframes, and test validator screenshots.
+- **`templates/`** – HTML templates organised by feature (registration, story views).
+- **`stories/`** – Django app that handles logic for stories, chapters, forms, views, and admin.
+- **`storytelling_platform/`** – Core Django project files, settings, URLs, and WSGI/ASGI entry points.
+- **`db.sqlite3`** – The SQLite database used during development.
+- **`manage.py`** – Django’s command-line utility.
+
+## This layout ensures modularity, clarity, and ease of collaboration for future development.
