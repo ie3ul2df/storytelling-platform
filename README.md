@@ -801,43 +801,12 @@ Below is the full file structure of the project:
 │   ├── erd.jpg
 │   ├── favicon.ico
 │   ├── github-activities/
-│   │   ├── commit-activity.jpg
-│   │   ├── commits-screenshot.jpg
-│   │   └── github-project-user-stories.jpg
 │   ├── js/
 │   │   ├── bookmark.js
 │   │   ├── comment.js
 │   │   └── rating.js
 │   ├── prototypes/
-│   │   ├── mockups/
-│   │   │   ├── home-mobile-size.jpg
-│   │   │   ├── home-tablet-size.jpg
-│   │   │   ├── home-wide-screen.jpg
-│   │   │   ├── profile-tablet-and-mobile-size.jpg
-│   │   │   ├── profile-wide-screen.jpg
-│   │   │   ├── storypage-tablet-and-mobile-size.jpg
-│   │   │   └── storypage-wide-screen.jpg
-│   │   └── wireframes/
-│   │       ├── home-mobile-size.png
-│   │       ├── home-tablet-size.png
-│   │       ├── home-wide-screen.png
-│   │       ├── profile-tablet-and-mobile-size.png
-│   │       ├── profile-wide-screen.png
-│   │       ├── storypage-tablet-and-mobile-size.png
-│   │       └── storypage-wide-screen.png
 │   └── test-images/
-│       ├── flake8-python-validation/
-│       │   └── all-python-files.JPG
-│       ├── jshint-validator/
-│       │   ├── bookmarks.js-file.JPG
-│       │   ├── comment.js-file.JPG
-│       │   └── rating.js-file.JPG
-│       ├── w3c-css-validator/
-│       │   └── style.css-file.JPG
-│       └── w3c-html-validator/
-│           ├── home.JPG
-│           ├── story-detail-page.JPG
-│           └── user-profile-page.JPG
 ├── stories/
 │   ├── admin.py
 │   ├── apps.py
@@ -879,4 +848,4 @@ Below is the full file structure of the project:
 - **`db.sqlite3`** – The SQLite database used during development.
 - **`manage.py`** – Django’s command-line utility.
 
-## This layout ensures modularity, clarity, and ease of collaboration for future development.
+This layout ensures modularity, clarity, and ease of collaboration for future development.
