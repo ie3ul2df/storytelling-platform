@@ -430,3 +430,103 @@ The application was manually tested on the following browsers:
 All key features—user registration, login/logout, story and chapter CRUD operations, form submissions, ranking system, and interactive content—functioned correctly with no layout shifts or JavaScript issues.
 
 ✅ Full cross-browser compatibility confirmed.
+
+---
+
+## 🏗️ Information Architecture & Data Models
+
+The **Storygram** application uses a relational database structure that reflects key real-world interactions between users, stories, chapters, and feedback. Below is an overview of each model and how they relate to each other, along with the entity-relationship diagram (ERD).
+
+---
+
+### 🗺️ Entity-Relationship Diagram
+
+![ERD Diagram](static/erd.jpg)
+
+---
+
+### 🧱 Models Overview
+
+#### 📖 Story
+
+- Represents a full story project.
+- Connected to the `User` (author) with a **OneToMany** relationship via `ForeignKey`.
+- Tracks whether it's **public** or **collaborative**, and stores a **Cloudinary image**.
+- Related to:
+  - `Chapter` (OneToMany)
+  - `StoryRating` (OneToMany)
+  - `Comment` (OneToMany)
+  - `Bookmark` (OneToMany)
+
+---
+
+#### 📚 Chapter
+
+- Represents a single part of a story.
+- Related to a `Story` (**ForeignKey**), and an `author` (`User`).
+- Supports **parent-child** self-relationships for branching/forking storylines (`parent = ForeignKey('self')`).
+- Connected to:
+  - `Rating` (OneToMany)
+  - `Comment` (OneToMany)
+
+---
+
+#### ⭐ Rating
+
+- Stores a numeric rating (1–5) for a chapter.
+- Related to `Chapter` and `User`.
+- **Constraint**: Each user can only rate a chapter once (`unique_together = ('chapter', 'user')`).
+
+---
+
+#### 🧑‍💻 UserProfile
+
+- Extends Django’s built-in `User` with:
+  - Bio, image, contact email
+  - **Follow system** using `ManyToManyField` to self (asymmetric)
+- Automatically created/updated via `post_save` signal.
+
+---
+
+#### 🌟 StoryRating
+
+- Stores one overall rating per user **per story**.
+- Related to `Story` and `User`.
+- **Constraint**: Only one rating allowed per (user, story) pair (`unique_together = ('story', 'user')`).
+
+---
+
+#### 🔖 Bookmark
+
+- Allows users to save/favourite stories.
+- Related to `User` and `Story`.
+- **Constraint**: No duplicate bookmarks (`unique_together = ('user', 'story')`).
+
+---
+
+#### 💬 Comment
+
+- Users can comment on a `Story` or a `Chapter`.
+- Supports threaded replies via self-referencing `parent = ForeignKey('self')`.
+- Tracks `is_read` for notification logic.
+- **Ordering**: Comments are chronologically sorted by `created_at`.
+
+---
+
+### 🔗 Summary of Relationships
+
+| Model       | Related To            | Relationship Type              |
+| ----------- | --------------------- | ------------------------------ |
+| Story       | User                  | ForeignKey (ManyToOne)         |
+| Story       | Chapter               | Reverse ForeignKey (OneToMany) |
+| Chapter     | Story, User           | ForeignKey                     |
+| Chapter     | Chapter (self)        | ForeignKey (Parent/Child)      |
+| Chapter     | Rating                | Reverse ForeignKey             |
+| Story       | StoryRating, Bookmark | Reverse ForeignKey             |
+| UserProfile | User                  | OneToOne                       |
+| UserProfile | UserProfile (self)    | ManyToMany (Following)         |
+| Comment     | Story, Chapter, User  | ForeignKey                     |
+
+---
+
+The database schema is designed for flexibility in storytelling: allowing branching chapters, public/private visibility, rating systems, collaborative input, and rich user interactions through following, bookmarking, and commenting.
