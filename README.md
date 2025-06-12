@@ -86,32 +86,36 @@ Each view includes:
 - Story detail and chapter forms
 - Rating and contribution interactions
 
-**WIREFRAMES**
+## 🧰 Wireframes & Mockups
+
+### **WIREFRAMES**
 
 These wireframes were designed in Balsamiq and illustrate the responsive layout planned for Storygram across mobile, tablet, and desktop devices.
 
 **🏠 Home Page**
 
 - Mobile:  
-  ![Home Mobile Wireframe](static/prototypes/wireframes/Home-Mobile-Size.png)
+  ![Home Mobile Wireframe](static/prototypes/wireframes/home-mobile-size.png)
 - Tablet:  
-  ![Home Tablet Wireframe](static/prototypes/wireframes/Home-Tablet-Size.png)
+  ![Home Tablet Wireframe](static/prototypes/wireframes/home-tablet-size.png)
 - Desktop:  
-  ![Home Desktop Wireframe](static/prototypes/wireframes/Home-Wide-Screen.png)
+  ![Home Desktop Wireframe](static/prototypes/wireframes/home-wide-screen.png)
 
 **👤 Profile Page**
 
 - Tablet & Mobile:  
-  ![Profile Tablet Wireframe](static/prototypes/wireframes/Profile-Tablet-and-Mobile-Size.png)
+  ![Profile Tablet Wireframe](static/prototypes/wireframes/profile-tablet-and-mobile-size.png)
 - Desktop:  
-  ![Profile Desktop Wireframe](static/prototypes/wireframes/Profile-Wide-Screen.png)
+  ![Profile Desktop Wireframe](static/prototypes/wireframes/profile-wide-screen.png)
 
 **📖 Story Page**
 
 - Tablet & Mobile:  
-  ![Story Tablet Wireframe](static/prototypes/wireframes/StoryPage-Tablet-and-Mobile-Size.png)
+  ![Story Tablet Wireframe](static/prototypes/wireframes/storypage-tablet-and-mobile-size.png)
 - Desktop:  
-  ![Story Desktop Wireframe](static/prototypes/wireframes/StoryPage-Wide-Screen.png)
+  ![Story Desktop Wireframe](static/prototypes/wireframes/storypage-wide-screen.png)
+
+---
 
 ### Surface
 
@@ -123,32 +127,34 @@ These wireframes were designed in Balsamiq and illustrate the responsive layout 
 - **Icons:** Bootstrap Icons for bookmarks, ratings, and UI feedback.
 - **Accessibility:** Used semantic HTML, colour contrast, alt text for images, and responsive layouts for mobile users.
 
-**MOCKUPS**
+---
+
+### **MOCKUPS**
 
 These mockups reflect the final visual design and layout used in Storygram.
 
 **🏠 Home Page**
 
 - Mobile:  
-  ![Home Mobile Mockup](static/prototypes/mockups/Home-Mobile-Size.JPG)
+  ![Home Mobile Mockup](static/prototypes/mockups/home-mobile-size.jpg)
 - Tablet:  
-  ![Home Tablet Mockup](static/prototypes/mockups/Home-Tablet-Size.JPG)
+  ![Home Tablet Mockup](static/prototypes/mockups/home-tablet-size.jpg)
 - Desktop:  
-  ![Home Desktop Mockup](static/prototypes/mockups/Home-Wide-Screen.JPG)
+  ![Home Desktop Mockup](static/prototypes/mockups/home-wide-screen.jpg)
 
 **👤 Profile Page**
 
 - Tablet & Mobile:  
-  ![Profile Tablet Mockup](static/prototypes/mockups/Profile-Tablet-and-Mobile-Size.jpg)
+  ![Profile Tablet Mockup](static/prototypes/mockups/profile-tablet-and-mobile-size.jpg)
 - Desktop:  
-  ![Profile Desktop Mockup](static/prototypes/mockups/Profile-Wide-Screen.jpg)
+  ![Profile Desktop Mockup](static/prototypes/mockups/profile-wide-screen.jpg)
 
 **📖 Story Page**
 
 - Tablet & Mobile:  
-  ![Story Tablet Mockup](static/prototypes/mockups/StoryPage-Tablet-and-Mobile-Size.jpg)
+  ![Story Tablet Mockup](static/prototypes/mockups/storypage-tablet-and-mobile-size.jpg)
 - Desktop:  
-  ![Story Desktop Mockup](static/prototypes/mockups/StoryPage-Wide-Screen.jpg)
+  ![Story Desktop Mockup](static/prototypes/mockups/storypage-wide-screen.jpg)
 
 ## 👥 Target Audience & User Stories
 
@@ -199,9 +205,11 @@ User stories are grouped by priority using the MoSCoW method:
 
 > You can find evidence for the successful implementation of these user stories in the [Testing](#-testing) section.
 
-## 🧪 Manual Testing of User Stories
+## 🧪 Testing
 
-The following table documents manual testing of each user story to ensure expected functionality. All tested features worked as intended.
+### ✅ Manual Testing of User Stories
+
+The following table documents manual testing of each user story to ensure expected functionality. All features were tested successfully and worked as intended.
 
 | User Story                         | Action Taken                                 | Expected Result                                  | Actual Result | Status |
 | ---------------------------------- | -------------------------------------------- | ------------------------------------------------ | ------------- | ------ |
@@ -218,58 +226,81 @@ The following table documents manual testing of each user story to ensure expect
 | Auto-Select Highest Ranked Chapter | Rated chapters                               | Highest-rated chapter is marked as official next | Success       | ✅     |
 | Logout                             | Clicked "Logout"                             | User is logged out and redirected                | Success       | ✅     |
 
-## 🐞 Known Issues & Fixes
+---
 
-### 📌 Dynamic Chapter Carousel Bug
+### 🐞 Known Issues & Fixes
+
+#### 📌 Dynamic Chapter Carousel Bug
 
 **Issue:**  
-All chapters were stacked vertically instead of sliding like a carousel.
+All versions of a chapter were stacked vertically rather than sliding in a carousel.
 
-**Cause:**
+**Causes:**
 
-- Multiple `.active` classes or none caused Bootstrap to break.
-- Parent chapter duplicated outside and inside the carousel.
+- Multiple or missing `.active` classes confused Bootstrap’s carousel.
+- Parent chapter was duplicated inside and outside the loop.
+- Django template logic used unsupported parentheses.
 
-**Fix:**
+**Solutions:**
 
-- Unified all chapters (parent + children) under one `.carousel-inner`.
-- Marked exactly one slide as `.active` (either the highest-rated or the first).
-- Conditional rendering of controls (only if multiple slides exist).
-- Used `forloop.counter` to show "Chapter 1", "Chapter 2", etc.
-- Removed parentheses from Django template logic to avoid `TemplateSyntaxError`.
+- Combined parent and children into one `.carousel-inner`.
+- Applied `.active` to only one slide based on highest rating or position.
+- Used `forloop.counter` to label chapters correctly.
+- Hid carousel controls if only one slide exists.
+- Rewrote logic using Django-compatible syntax without parentheses.
 
 ---
 
-### 📌 AJAX Star Rating Sync Error
+#### 📌 AJAX Star Rating Sync Error
 
-**Issue:**
+**Issues:**
 
-- Stars highlighted in reverse.
-- Ratings were stored but not reflected dynamically.
-- Carousel didn't auto-load the highest-rated chapter.
-- Some `innerText` updates failed.
+- Stars initially highlighted from right-to-left.
+- Ratings were stored but not immediately reflected.
+- Highest-rated chapter was not loaded first.
+- JS errors occurred when trying to update non-existent DOM elements.
 
-**Fix:**
+**Fixes:**
 
-- Refactored JS to handle left-to-right star highlights.
-- DOM updates synced using class-based selectors (`.avg`, `.count`).
-- Sorted chapters server-side in `views.py` by rating.
-- Updated template to render a single sorted list with correct active class.
+- Rewrote JS for proper hover behaviour and rating submission.
+- Ensured DOM updates target `.avg` and `.count` reliably.
+- Updated `views.py` to sort chapters by `avg_rating`.
+- Carousel now loads top-rated chapter first and syncs indicators with content.
 
 **Result:**  
-AJAX-powered rating now updates stars, average, and user count live. Highest-rated chapter loads first.
+Users can now rate chapters with immediate feedback, and carousels reflect dynamic rankings correctly.
 
 ---
 
-### 📌 Other Key Challenges & Solutions
+### ⚙️ Other Development Challenges & Solutions
 
-| Challenge                | Fix                                                                                 |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| ⭐ Total ranking logic   | Averaged top chapters from each season; passed into templates.                      |
-| 🎛️ Button permissions    | Used conditional logic based on user roles to show/hide edit/contribute options.    |
-| 🧩 Nested template logic | Simplified blocks and used clearer variable naming.                                 |
-| 🧪 Delete confirmation   | Added dialog to prevent accidental story/chapter deletions.                         |
-| 🧍 Author visibility     | Used `user == chapter.author` to show personal edit/delete buttons.                 |
-| 🖼️ Image uploads         | Configured `MEDIA_URL`, `MEDIA_ROOT`, and used `{% if image %}` checks.             |
-| 🧠 Dynamic contributions | Allowed branching for new chapters and seasons while maintaining permission checks. |
-| 🧵 Carousel sync         | Synced indicators and content to avoid JS errors.                                   |
+| Challenge                  | Fix                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------- |
+| ⭐ Total ranking logic     | Calculated average of top-rated chapters per season; passed via context to templates. |
+| 🔒 Button visibility       | Controlled via precise user-role checks in templates.                                 |
+| 🧩 Template nesting issues | Simplified deeply nested logic with clearer tags and block structures.                |
+| ❌ Delete confirmation     | Added dialog to prevent accidental deletions.                                         |
+| 🧍 Author-only controls    | Applied `user == chapter.author` checks to show edit/delete only to authors.          |
+| 🖼️ Image handling          | Configured `MEDIA_URL`, `MEDIA_ROOT`, and `{% if story.image %}` to avoid errors.     |
+| 🧠 Contribution branching  | Allowed conditional creation of new chapters and seasons with correct permissions.    |
+| 🧵 Carousel indicator sync | Ensured indicators match slide count to prevent JS errors.                            |
+
+---
+
+### 💻 Code Validation & Linting (Python)
+
+**🧾 Code Formatting & Linting Log – `stories` App**
+
+| Task                  | Tool        | Result                        |
+| --------------------- | ----------- | ----------------------------- |
+| Format code           | `black`     | ✅ 14 files auto-formatted    |
+| Remove unused imports | `autoflake` | ✅ All unused imports removed |
+| Style check           | `flake8`    | ✅ Passed with no issues      |
+
+**Command History:**
+
+```bash
+black stories/
+autoflake --remove-all-unused-imports --in-place --recursive stories/
+flake8 stories
+```
