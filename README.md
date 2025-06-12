@@ -203,7 +203,7 @@ User stories are grouped by priority using the MoSCoW method:
 
 ---
 
-![Project completation process](static/prototypes/github-activities/github-project-user-stories.jpg)
+![Project completation process](static/github-activities/github-project-user-stories.jpg)
 
 > You can find evidence for the successful implementation of these user stories in the [Testing](#-testing) section.
 
