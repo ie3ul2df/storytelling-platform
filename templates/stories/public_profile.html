@@ -27,7 +27,7 @@
     </div>
     {% endif %}
 
-    <!--  Follow/Unfollow button with form submission -->
+    <!-- Follow/Unfollow button with form submission -->
 
     <form method="post" action="{% url 'toggle_follow' profile.user.username %}" class="mb-4">
         {% csrf_token %}
@@ -41,7 +41,7 @@
 
     <hr>
 
-    <!--  Public stories list section with cards -->
+    <!-- Public stories list section with cards -->
 
     <h4 class="mb-3">📚 Public Stories</h4>
     {% if user_stories %}
