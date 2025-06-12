@@ -198,3 +198,78 @@ User stories are grouped by priority using the MoSCoW method:
 ---
 
 > You can find evidence for the successful implementation of these user stories in the [Testing](#-testing) section.
+
+## 🧪 Manual Testing of User Stories
+
+The following table documents manual testing of each user story to ensure expected functionality. All tested features worked as intended.
+
+| User Story                         | Action Taken                                 | Expected Result                                  | Actual Result | Status |
+| ---------------------------------- | -------------------------------------------- | ------------------------------------------------ | ------------- | ------ |
+| Register/Login                     | Clicked "Register" and completed form        | User is redirected to profile/dashboard          | Success       | ✅     |
+| Create Story                       | Filled out story form and submitted          | Story appears in list and on profile             | Success       | ✅     |
+| Write Multiple Chapters            | Added multiple chapters to a story           | Chapters are saved and visible under story       | Success       | ✅     |
+| Rank Chapter                       | Rated a chapter using form                   | Rating is saved and shown in average             | Success       | ✅     |
+| Control Privacy                    | Set story to private in edit form            | Story becomes invisible to other users           | Success       | ✅     |
+| View Homepage                      | Visited home page                            | Top-ranked stories are listed                    | Success       | ✅     |
+| Edit/Delete Story                  | Edited and deleted a story from profile      | Changes reflect and story removed when deleted   | Success       | ✅     |
+| View Full Story                    | Opened story detail page                     | Full story and chapters are readable             | Success       | ✅     |
+| Enable/Disable Contributions       | Edited story to allow/disallow contributions | Contribution buttons appear/disappear            | Success       | ✅     |
+| Contribute to Story                | Added a chapter to someone else's story      | Chapter saved under correct story                | Success       | ✅     |
+| Auto-Select Highest Ranked Chapter | Rated chapters                               | Highest-rated chapter is marked as official next | Success       | ✅     |
+| Logout                             | Clicked "Logout"                             | User is logged out and redirected                | Success       | ✅     |
+
+## 🐞 Known Issues & Fixes
+
+### 📌 Dynamic Chapter Carousel Bug
+
+**Issue:**  
+All chapters were stacked vertically instead of sliding like a carousel.
+
+**Cause:**
+
+- Multiple `.active` classes or none caused Bootstrap to break.
+- Parent chapter duplicated outside and inside the carousel.
+
+**Fix:**
+
+- Unified all chapters (parent + children) under one `.carousel-inner`.
+- Marked exactly one slide as `.active` (either the highest-rated or the first).
+- Conditional rendering of controls (only if multiple slides exist).
+- Used `forloop.counter` to show "Chapter 1", "Chapter 2", etc.
+- Removed parentheses from Django template logic to avoid `TemplateSyntaxError`.
+
+---
+
+### 📌 AJAX Star Rating Sync Error
+
+**Issue:**
+
+- Stars highlighted in reverse.
+- Ratings were stored but not reflected dynamically.
+- Carousel didn't auto-load the highest-rated chapter.
+- Some `innerText` updates failed.
+
+**Fix:**
+
+- Refactored JS to handle left-to-right star highlights.
+- DOM updates synced using class-based selectors (`.avg`, `.count`).
+- Sorted chapters server-side in `views.py` by rating.
+- Updated template to render a single sorted list with correct active class.
+
+**Result:**  
+AJAX-powered rating now updates stars, average, and user count live. Highest-rated chapter loads first.
+
+---
+
+### 📌 Other Key Challenges & Solutions
+
+| Challenge                | Fix                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| ⭐ Total ranking logic   | Averaged top chapters from each season; passed into templates.                      |
+| 🎛️ Button permissions    | Used conditional logic based on user roles to show/hide edit/contribute options.    |
+| 🧩 Nested template logic | Simplified blocks and used clearer variable naming.                                 |
+| 🧪 Delete confirmation   | Added dialog to prevent accidental story/chapter deletions.                         |
+| 🧍 Author visibility     | Used `user == chapter.author` to show personal edit/delete buttons.                 |
+| 🖼️ Image uploads         | Configured `MEDIA_URL`, `MEDIA_ROOT`, and used `{% if image %}` checks.             |
+| 🧠 Dynamic contributions | Allowed branching for new chapters and seasons while maintaining permission checks. |
+| 🧵 Carousel sync         | Synced indicators and content to avoid JS errors.                                   |
