@@ -21,6 +21,20 @@ The project demonstrates key backend development skills expected by assessors an
 - Clean, PEP8-compliant Python code.
 - Clear documentation and version control practices.
 
+## 🚀 How It Works
+
+The Storytelling Platform lets users create collaborative, branching narratives with intuitive control and community-driven ranking:
+
+- **Story Starter:** The first chapter, written by the author, serves as the “story brief” or main entry point.  
+- **Contribution Control:** When creating a public story, the author can enable or disable contributions.  
+- **Seasons & Chapters:** If contributions are allowed, any user can add new “seasons” (root chapters) or child chapters under existing ones.  
+- **User Ranking:** At the bottom of each chapter—and for the original story brief—readers can assign a 1–5 star rating.  
+- **Auto-Selection:** The system automatically highlights the highest-ranked chapter in each season as the official continuation.  
+- **Branching Structure:** Within every season (Season 1, Season 2, etc.), contributors can submit competing chapters (e.g., Chapter 1 by Alice, Chapter 1 by Bob).  
+- **Overall Story Rank:** The platform computes the story’s total rank by averaging the ratings of the original story brief and all selected chapter winners.  
+- **Full CRUD & Comments:** Users may edit or delete their own stories, chapters, and ratings. Comments are available on each chapter and the story overview.  
+- **Homepage & Discovery:** The homepage automatically lists top-ranked stories first, with search and filter controls for refined discovery.  
+
 ## 🧠 UX & UI Design
 
 ### 1. Strategy
